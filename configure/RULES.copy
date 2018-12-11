@@ -1,0 +1,2 @@
+# RULES.copy
+include $(EPICS_BASE)/configure/RULES.copy

@@ -1,0 +1,22 @@
+# Twincat ignores
+_Boot
+_Libraries
+_CompileInfo
+*.sln
+*.suo
+*~
+*.tpy
+*.bak
+*.~u
+
+# EPICS ignores
+O.*
+archive
+autosave
+bin
+build
+db
+dbd
+
+# Vim ignores
+*.swp

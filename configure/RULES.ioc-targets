@@ -1,0 +1,2 @@
+# RULES.ioc-targets
+include $(EPICS_BASE)/configure/RULES.ioc-targets

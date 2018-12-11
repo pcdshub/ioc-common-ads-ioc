@@ -1,0 +1,2 @@
+# RULES.autosave
+include $(EPICS_BASE)/configure/RULES.autosave
