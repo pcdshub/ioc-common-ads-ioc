@@ -6,7 +6,7 @@ include $(TOP)/RELEASE_SITE
 # Define the version of modules needed by
 # IOC apps or other Support apps
 # ===============================================================
-IOCADMIN_MODULE_VERSION = R3.0.0-2.0.1
+IOCADMIN_MODULE_VERSION = R3.1.15-1.2.0
 AUTOSAVE_MODULE_VERSION = R5.1-0.1.0
 ASYN_MODULE_VERSION     = R4.31-1.0.0
 AXIS_MODULE_VERSION     = R0.0.1

@@ -22,6 +22,7 @@ DB_INSTALLS += $(AXIS)/db/EthercatMC.template
 DB_INSTALLS += axis_extra.db
 
 DB_INSTALLS += $(IOCADMIN)/db/iocSoft.db
+DB_INSTALLS += $(IOCADMIN)/db/devIocInfo.db
 DB_INSTALLS += $(AUTOSAVE)/db/save_restoreStatus.db
 DB_INSTALLS += $(ASYN)/db/asynRecord.db
 
