@@ -37,6 +37,7 @@ epicsEnvSet("PREFIX",        "$$PREFIX")
 $$LOOP(MOTOR)
 EthercatMCCreateAxis("$(MOTOR_PORT)", "$$AXIS", "6", "")
 dbLoadRecords("db/EthercatMC.template", "PREFIX=$(PREFIX), MOTOR_NAME=$$NAME, R=$$NAME:, MOTOR_PORT=$(MOTOR_PORT), ASYN_PORT=$(ASYN_PORT), AXIS_NO=$$AXIS, DESC=$$IF(DESC,$$DESC,Axis $$AXIS), VELO=0, JVEL=0, ACCL=0, PREC=4, DHLM=0, DLLM=0")
+dbLoadRecords("db/axis_extra.db", "PREFIX=$(PREFIX), MOTOR_NAME=$$NAME")
 $$ENDLOOP(MOTOR)
 
 ##############################################################################
