@@ -1,4 +1,3 @@
-==========
 ADS Motion
 ==========
 
@@ -14,7 +13,7 @@ Things defined here:
 - IOCAdmin module tools
 
 This is set up to build on the LCLS PCDS NFS-accessible machines. This will not
-build on older operatins systems such as rhel5 and rhel6. It does not need any
+build on older operating systems such as rhel5 and rhel6. It does not need any
 specific environment variable set, just type make. You can probably get it to
 build in other environments by modifying the `RELEASE_SITE` file appropriately.
 
