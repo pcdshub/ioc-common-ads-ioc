@@ -18,8 +18,7 @@ include $(TOP)/configure/CONFIG
 ARCHIVE += axis_archive.tpl-arch
 REQ += axis_autosave.tpl-req
 
-DB_INSTALLS += $(AXIS)/db/EthercatMC.template
-DB_INSTALLS += axis_extra.db
+DB_INSTALLS += $(ETHERCATMC)/db/EthercatMC*.template
 
 DB_INSTALLS += $(IOCADMIN)/db/iocSoft.db
 DB_INSTALLS += $(IOCADMIN)/db/devIocInfo.db
