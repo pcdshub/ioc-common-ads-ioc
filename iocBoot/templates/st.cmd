@@ -14,14 +14,13 @@ cd( "$(IOCTOP)" )
 < /reg/d/iocCommon/All/pre_linux.cmd
 
 # Register all support components
-dbLoadDatabase("dbd/ads.dbd")
+dbLoadDatabase("dbd/adsMotion.dbd")
 ads_registerRecordDeviceDriver(pdbbase)
 
 ## LOAD STUFF HERE!!!  DRIVERS FIRST, THEN RECORDS!
 ## connect to TwinCAT runtime
 adsAsynPortDriverConfigure("A","$$PLC","$$AMSID",851,1000,0,0,500,1000,1000,0)
-##
-## debuging
+
 asynReport(2,"A")
 #asynSetTraceMask("A",-1,0xFF)
 
