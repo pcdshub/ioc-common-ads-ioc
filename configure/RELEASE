@@ -6,11 +6,13 @@ include $(TOP)/RELEASE_SITE
 # Define the version of modules needed by
 # IOC apps or other Support apps
 # ===============================================================
-IOCADMIN_MODULE_VERSION = R3.1.15-1.2.0
-AUTOSAVE_MODULE_VERSION = R5.1-0.1.0
-ASYN_MODULE_VERSION     = R4.31-1.0.0
-AXIS_MODULE_VERSION     = R0.0.1
-ADS_MODULE_VERSION      = R2.0.0-0.0.1
+AUTOSAVE_MODULE_VERSION   = R5.8-2.1.0
+IOCADMIN_MODULE_VERSION   = R3.1.15-1.10.0
+ASYN_MODULE_VERSION       = R4.35-0.0.1
+MOTOR_MODULE_VERSION      = R6.9-ess-0.0.1
+ETHERCATMC_MODULE_VERSION = R2.1.0-0.1.0
+ADS_MODULE_VERSION        = R2.0.0-0.0.2
+
 
 # ============================================================
 # External Support module path definitions
@@ -25,11 +27,44 @@ ADS_MODULE_VERSION      = R2.0.0-0.0.1
 #
 # If your build fails, look for these paths in your build output
 # ============================================================
-IOCADMIN = $(EPICS_MODULES)/iocAdmin/$(IOCADMIN_MODULE_VERSION)
-AUTOSAVE = $(EPICS_MODULES)/autosave/$(AUTOSAVE_MODULE_VERSION)
-ASYN	 = $(EPICS_MODULES)/asyn/$(ASYN_MODULE_VERSION)
-AXIS	 = $(EPICS_MODULES)/axis/$(AXIS_MODULE_VERSION)
-ADS	 = $(EPICS_MODULES)/twincat-ads/$(ADS_MODULE_VERSION)
+AUTOSAVE=$(EPICS_MODULES)/autosave/$(AUTOSAVE_MODULE_VERSION)
+IOCADMIN=$(EPICS_MODULES)/iocAdmin/$(IOCADMIN_MODULE_VERSION)
+ETHERCATMC=$(EPICS_MODULES)/ethercatmc/$(ETHERCATMC_MODULE_VERSION)
+MOTOR=$(EPICS_MODULES)/motor/$(MOTOR_MODULE_VERSION)
+ASYN=$(EPICS_MODULES)/asyn/$(ASYN_MODULE_VERSION)
+ADS=$(EPICS_MODULES)/twincat-ads/$(ADS_MODULE_VERSION)
 
-# Set EPICS_BASE last so it appears last in the DB, DBD, INCLUDE, and LIB search paths
-EPICS_BASE = $(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION)
+# ===============================================================
+# Define the location and version of EPICS base
+# ===============================================================
+EPICS_BASE=$(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION)
+
+# Check for valid EPICS_BASE
+ifeq ($(wildcard $(EPICS_BASE)/include),)
+$(error Invalid EPICS_BASE: $(EPICS_BASE)/include)
+endif
+
+# Check for valid modules
+ifeq ($(wildcard $(AUTOSAVE)/lib/$(T_A)),)
+$(error Invalid AUTOSAVE: $(AUTOSAVE)/lib/$(T_A))
+endif
+
+ifeq ($(wildcard $(IOCADMIN)/lib/$(T_A)),)
+$(error Invalid IOCADMIN: $(IOCADMIN)/lib/$(T_A))
+endif
+
+ifeq ($(wildcard $(ASYN)/lib/$(T_A)),)
+$(error Invalid ASYN: $(ASYN)/lib/$(T_A))
+endif
+
+ifeq ($(wildcard $(ETHERCATMC)/lib/$(T_A)),)
+$(error Invalid ETHERCATMC: $(ETHERCATMC)/lib/$(T_A))
+endif
+
+ifeq ($(wildcard $(MOTOR)/lib/$(T_A)),)
+$(error Invalid MOTOR: $(MOTOR)/lib/$(T_A))
+endif
+
+ifeq ($(wildcard $(ADS)/lib/$(T_A)),)
+$(error Invalid ADS: $(ADS)/lib/$(T_A))
+endif
