@@ -1,15 +1,10 @@
-BASE_MODULE_VERSION     = R3.14.12-0.4.0
-EPICS_SITE_TOP          = /reg/g/pcds/package/epics/3.14
-EPICS_BASE_VER          = $(BASE_MODULE_VERSION)
-EPICS_MODULES           = $(EPICS_SITE_TOP)/$(BASE_MODULE_VERSION)/modules
-EPICS_HOST_ARCH         = $(shell $(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION)/startup/EpicsHostArch)
-PSPKG_ROOT              = /reg/g/pcds/pkg_mgr
-$(info Setting BASE_MODULE_VERSION=$(BASE_MODULE_VERSION) from $(EPICS_MODULES)/RELEASE_SITE)
+# =============================================================
+# Define the top of the EPICS tree for your site.
+# We will build some tools/scripts that allow us to
+# change this easily when relocating software.
+# ==============================================================
+EPICS_SITE_TOP=/reg/g/pcds/epics/
+BASE_MODULE_VERSION=R7.0.2-2.0
 
-# EPICS_BASE should get defined last in your TOP/configure/RELEASE.local so it appears
-# last in the search path order for DB, DBD, INCLUDE, and LIB files.
-# Don't even create a copy w/ a different name, as convertRelease.pl will still see it.
-# However, we can at least make sure the path we'll use for it is valid
-ifeq ($(wildcard $(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION)),)
-$(warning EPICS_BASE is invalid: $(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION))
-endif
+# EPICS module releases are kept here
+EPICS_MODULES=$(EPICS_SITE_TOP)/$(BASE_MODULE_VERSION)/modules

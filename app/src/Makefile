@@ -5,40 +5,47 @@ include $(TOP)/configure/CONFIG
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 #=============================
 
-USR_CXXFLAGS += -std=c++11
-
 #=============================
 # Build an ioc application
-# Use PROD_IOC_RTEMS for RTEMS only
-# Use PROD_IOC_Linux for Linux only
 PROD_IOC = adsMotion
 
 # adsMotion.dbd will be created and installed
 DBD += adsMotion.dbd
 
-# Include dbd files from all support applications:
+# adsMotion.dbd will be made up from these files:
 adsMotion_DBD += base.dbd
 adsMotion_DBD += iocAdmin.dbd
-adsMotion_DBD += autosaveSupport.dbd
-adsMotion_DBD += axisSupport.dbd
-adsMotion_DBD += EthercatMCSupport.dbd
+adsMotion_DBD += asSupport.dbd
 adsMotion_DBD += ads.dbd
 adsMotion_DBD += asyn.dbd
 adsMotion_DBD += drvAsynIPPort.dbd
 
-# Add all the support libraries needed by this IOC
-adsMotion_LIBS += axis
-adsMotion_LIBS += EthercatMCSupport
-adsMotion_LIBS += ads
-adsMotion_LIBS += asyn
+ifneq (,$(findstring /,$(CALC)))
+  adsMotion_DBD += calcSupport.dbd
+  adsMotion_LIBS += calc
+endif
 
-# Build the main IOC entry point on workstation OSs.
+ifneq (,$(findstring /,$(ADS)))
+  adsMotion_LIBS += ads
+  adsMotion_DBD  += ads.dbd
+endif
+
+ifneq (,$(findstring /,$(MOTOR)))
+  adsMotion_DBD += motorSupport.dbd
+  adsMotion_DBD += devSoftMotor.dbd
+  adsMotion_DBD += EthercatMcSupport.dbd
+
+  adsMotion_LIBS += motor
+  adsMotion_LIBS += softMotor
+  adsMotion_LIBS += EthercatMcSupport
+endif
+
+# adsMotion_registerRecordDeviceDriver.cpp will be created from adsMotion.dbd
 adsMotion_SRCS += adsMotion_registerRecordDeviceDriver.cpp
 adsMotion_SRCS_DEFAULT += adsMotionMain.cpp
-adsMotion_SRCS_vxWorks += -nil-
 
-# Finally link to the EPICS Base libraries
 adsMotion_LIBS += devIocStats
+adsMotion_LIBS += asyn
 adsMotion_LIBS += autosave
 adsMotion_LIBS += $(EPICS_BASE_IOC_LIBS)
 
@@ -47,4 +54,3 @@ adsMotion_LIBS += $(EPICS_BASE_IOC_LIBS)
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
-

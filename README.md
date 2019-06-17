@@ -2,10 +2,9 @@ ADS Motion
 ==========
 
 `ads-motion` is an IOC template for Beckhoff Motion deployments in the LCLS
-PCDS group at SLAC. It relies on the fork of the Axis module from ESS, which
-in turn is a fork of the Motor record from APS. That fork contains support
-for communicating with specifically structured TwinCAT projects using the ADS
-protocol.
+PCDS group at SLAC. It relies on the fork of the motor module from ESS. That
+fork contains support for communicating with specifically structured TwinCAT
+projects using the ADS protocol.
 
 Things defined here:
 - Templated st.cmd, autosave, and archive files
