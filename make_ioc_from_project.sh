@@ -7,11 +7,6 @@ if [ -z "$(which tcparse-stcmd)" ]; then
     exit 1
 fi
 
-if [ -z "$(which makeBaseApp.pl)" ]; then
-    echo "Unable to find makeBaseApp.pl in your current environment." > /dev/stderr
-    exit 1
-fi
-
 if [ -z "$PROJECT_PATH" ]; then
     echo "Usage: $0 {path/to/project_name.tsproj} [ioc_name]" > /dev/stderr
     echo "ioc_name defaults to ioc-{project_name}." > /dev/stderr
@@ -40,7 +35,15 @@ echo "IOC path: $IOC_PATH"
 
 if [ ! -d "$IOC_PATH" ]; then
     echo "IOC directory does not exist; running makeBaseApp..."
-    makeBaseApp.pl -t ioc -a $(epicsHostArch.pl) -i $IOC_NAME
+    mkdir -p $IOC_PATH
+    cat > $IOC_PATH/Makefile <<'EOF'
+TOP = ../..
+include $(TOP)/configure/CONFIG
+ARCH = $(EPICS_HOST_ARCH)
+TARGETS = envPaths
+include $(TOP)/configure/RULES.ioc
+EOF
+
 fi
 
 pushd $IOC_PATH
