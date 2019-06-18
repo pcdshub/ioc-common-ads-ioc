@@ -34,7 +34,7 @@ echo "IOC name: $IOC_NAME"
 echo "IOC path: $IOC_PATH"
 
 if [ ! -d "$IOC_PATH" ]; then
-    echo "IOC directory does not exist; running makeBaseApp..."
+    echo "Creating IOC directory and corresponding Makefile."
     mkdir -p $IOC_PATH
     cat > $IOC_PATH/Makefile <<'EOF'
 TOP = ../..
