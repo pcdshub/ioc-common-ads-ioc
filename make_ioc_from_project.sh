@@ -2,7 +2,7 @@
 
 PROJECT_PATH=$1
 
-if [ -z "$(which tcparse-stcmd)" ]; then
+if [ -x "$(command -v tcparse-stcmd)" ]; then
     echo "Unable to find tcparse-stcmd in your current environment." > /dev/stderr
     exit 1
 fi
