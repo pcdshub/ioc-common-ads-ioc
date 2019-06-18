@@ -48,5 +48,5 @@ fi
 
 pushd $IOC_PATH
 echo "Generating the st.cmd:"
-tcparse-stcmd -b adsMotion "$PROJECT_PATH" > st.cmd
+tcparse-stcmd --binary adsMotion "$PROJECT_PATH" > st.cmd
 popd
