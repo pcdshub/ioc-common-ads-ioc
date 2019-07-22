@@ -2,8 +2,8 @@
 
 PROJECT_PATH=$1
 
-if [ -x "$(command -v tcparse-stcmd)" ]; then
-    echo "Unable to find tcparse-stcmd in your current environment." > /dev/stderr
+if [ ! -x "$(command -v pytmc-stcmd)" ]; then
+    echo "Unable to find pytmc-stcmd in your current environment." > /dev/stderr
     exit 1
 fi
 
@@ -48,5 +48,5 @@ fi
 
 pushd $IOC_PATH
 echo "Generating the st.cmd:"
-tcparse-stcmd --binary adsMotion "$PROJECT_PATH" > st.cmd
+pytmc-stcmd --binary adsMotion "$PROJECT_PATH" > st.cmd
 popd
