@@ -1,0 +1,62 @@
+ifndef IOC_TOP
+$(error IOC_TOP is not set)
+endif
+
+ifndef PROJECT_NAME
+$(error PROJECT_NAME is not set)
+endif
+
+ifndef PLC
+$(error PLC is not set)
+endif
+
+BINARY ?=
+PYTMC_OPTS ?=
+PREFIX ?=
+PROJECT_PATH ?= $(IOC_INSTANCE_PATH)/../../$(PROJECT_NAME)/$(PROJECT_NAME).tsproj
+TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
+STCMD_TEMPLATE ?= st.cmd.template
+BUILD_PATH ?= $(IOC_INSTANCE_PATH)/pytmc_build
+# abspath is failing with spaces - falling back to Python here:
+pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
+
+default: build clean
+
+build:
+	@echo "-----------------------------------------------------------"
+	@echo "Build path: $(BUILD_PATH)"
+	@echo "PLC: $(PLC)"
+	@echo "PYTMC_OPTS: $(PYTMC_OPTS)"
+	@echo "PROJECT_PATH: $(PROJECT_PATH)"
+	@echo "Absolute project path: " $(call pyabspath,$(PROJECT_PATH))
+	@echo "-----------------------------------------------------------"
+
+	mkdir -p "$(BUILD_PATH)"
+	@echo "\n\nExecuting pytmc..."
+	cd "$(BUILD_PATH)" && \
+		pytmc stcmd \
+		--plc "$(PLC)" \
+		--template-path "$(TEMPLATE_PATH)" \
+		--template "$(STCMD_TEMPLATE)" \
+		-p "$(PREFIX)" \
+		$(PYTMC_OPTS) \
+		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
+	@echo ""
+	@echo "Copying st.cmd and databases..."
+	(stat "$(IOC_INSTANCE_PATH)/st.cmd" >/dev/null 2>&1 && chmod +w "$(IOC_INSTANCE_PATH)/st.cmd") || true
+	install -Sb "$(BUILD_PATH)/st.cmd" $(IOC_INSTANCE_PATH)
+	(stat $(BUILD_PATH)/*.db >/dev/null 2>&1 && install -Sb "$(BUILD_PATH)/*.db" $(IOC_INSTANCE_PATH)) || true
+	chmod -w+x "$(IOC_INSTANCE_PATH)/st.cmd"
+	cd "$(IOC_INSTANCE_PATH)"
+	@echo ""
+	@echo "Build complete."
+
+
+clean:
+	@echo ""
+	@echo "Cleaning..."
+	rm -f "$(BUILD_PATH)/st.cmd" "$(BUILD_PATH)/*.db"
+	rmdir "$(BUILD_PATH)"
+
+
+.PHONY: default clean

@@ -1,9 +1,0 @@
-file axis_archive.tpl-arch
-{
-
-    pattern  { MOTOR          }
-             $$LOOP(MOTOR)
-             { $$PREFIX$$NAME }
-             $$ENDLOOP(MOTOR)
-
-}

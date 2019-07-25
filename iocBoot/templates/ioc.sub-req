@@ -1,9 +1,0 @@
-file axis_autosave.tpl-req
-{
-
-    pattern  { MOTOR          }
-             $$LOOP(MOTOR)
-             { $$PREFIX$$NAME }
-             $$ENDLOOP(MOTOR)
-
-}
