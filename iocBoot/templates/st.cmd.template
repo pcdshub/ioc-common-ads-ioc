@@ -81,13 +81,13 @@ dbLoadRecords("{{ db.file }}", "{{ db.macros }}")
 {% endfor %}
 cd "$(TOP)"
 
-dbLoadRecords("db/iocAdmin.db", "P={{prefix}},IOC={{prefix}}" )
-dbLoadRecords("db/save_restoreStatus.db", "P={{prefix}},IOC={{name}}" )
+dbLoadRecords("db/iocAdmin.db", "P={{prefix}}{{delim}},IOC={{prefix}}{{delim}}" )
+dbLoadRecords("db/save_restoreStatus.db", "P={{prefix}}{{delim}},IOC={{name}}" )
 
 # Setup autosave
 set_savefile_path( "$(IOC_DATA)/$(IOC)/autosave" )
 set_requestfile_path( "$(TOP)/autosave" )
-save_restoreSet_status_prefix( "{{prefix}}:" )
+save_restoreSet_status_prefix( "{{prefix}}{{delim}}" )
 save_restoreSet_IncompleteSetsOk( 1 )
 save_restoreSet_DatedBackupFiles( 1 )
 set_pass0_restoreFile( "$(IOC).sav" )
