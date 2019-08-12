@@ -31,9 +31,11 @@ build:
 	@echo "PROJECT_PATH: $(PROJECT_PATH)"
 	@echo "Absolute project path: " $(call pyabspath,$(PROJECT_PATH))
 	@echo "-----------------------------------------------------------"
+	@echo ""
+	@echo ""
 
 	mkdir -p "$(BUILD_PATH)"
-	@echo "\n\nExecuting pytmc..."
+	@echo "Executing pytmc..."
 	cd "$(BUILD_PATH)" && \
 		pytmc stcmd \
 		--plc "$(PLC)" \
@@ -45,7 +47,8 @@ build:
 
 	@echo ""
 	@echo "Copying st.cmd and databases..."
-	if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
+	@ if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
+		echo "* Changing permissions on the old st.cmd..." \
 		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
 	fi 
 
