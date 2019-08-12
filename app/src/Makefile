@@ -7,47 +7,47 @@ include $(TOP)/configure/CONFIG
 
 #=============================
 # Build an ioc application
-PROD_IOC = adsMotion
+PROD_IOC = adsIoc
 
-# adsMotion.dbd will be created and installed
-DBD += adsMotion.dbd
+# adsIoc.dbd will be created and installed
+DBD += adsIoc.dbd
 
-# adsMotion.dbd will be made up from these files:
-adsMotion_DBD += base.dbd
-adsMotion_DBD += iocAdmin.dbd
-adsMotion_DBD += asSupport.dbd
-adsMotion_DBD += ads.dbd
-adsMotion_DBD += asyn.dbd
-adsMotion_DBD += drvAsynIPPort.dbd
+# adsIoc.dbd will be made up from these files:
+adsIoc_DBD += base.dbd
+adsIoc_DBD += iocAdmin.dbd
+adsIoc_DBD += asSupport.dbd
+adsIoc_DBD += ads.dbd
+adsIoc_DBD += asyn.dbd
+adsIoc_DBD += drvAsynIPPort.dbd
 
 ifneq (,$(findstring /,$(CALC)))
-  adsMotion_DBD += calcSupport.dbd
-  adsMotion_LIBS += calc
+  adsIoc_DBD += calcSupport.dbd
+  adsIoc_LIBS += calc
 endif
 
 ifneq (,$(findstring /,$(ADS)))
-  adsMotion_LIBS += ads
-  adsMotion_DBD  += ads.dbd
+  adsIoc_LIBS += ads
+  adsIoc_DBD  += ads.dbd
 endif
 
 ifneq (,$(findstring /,$(MOTOR)))
-  adsMotion_DBD += motorSupport.dbd
-  adsMotion_DBD += devSoftMotor.dbd
-  adsMotion_DBD += EthercatMcSupport.dbd
+  adsIoc_DBD += motorSupport.dbd
+  adsIoc_DBD += devSoftMotor.dbd
+  adsIoc_DBD += EthercatMcSupport.dbd
 
-  adsMotion_LIBS += motor
-  adsMotion_LIBS += softMotor
-  adsMotion_LIBS += EthercatMcSupport
+  adsIoc_LIBS += motor
+  adsIoc_LIBS += softMotor
+  adsIoc_LIBS += EthercatMcSupport
 endif
 
-# adsMotion_registerRecordDeviceDriver.cpp will be created from adsMotion.dbd
-adsMotion_SRCS += adsMotion_registerRecordDeviceDriver.cpp
-adsMotion_SRCS_DEFAULT += adsMotionMain.cpp
+# adsIoc_registerRecordDeviceDriver.cpp will be created from adsIoc.dbd
+adsIoc_SRCS += adsIoc_registerRecordDeviceDriver.cpp
+adsIoc_SRCS_DEFAULT += adsIocMain.cpp
 
-adsMotion_LIBS += devIocStats
-adsMotion_LIBS += asyn
-adsMotion_LIBS += autosave
-adsMotion_LIBS += $(EPICS_BASE_IOC_LIBS)
+adsIoc_LIBS += devIocStats
+adsIoc_LIBS += asyn
+adsIoc_LIBS += autosave
+adsIoc_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #===========================
 
