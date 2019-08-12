@@ -10,6 +10,7 @@ ifndef PLC
 $(error PLC is not set)
 endif
 
+SHELL = /bin/bash
 BINARY ?=
 PYTMC_OPTS ?=
 PREFIX ?=
@@ -41,13 +42,21 @@ build:
 		-p "$(PREFIX)" \
 		$(PYTMC_OPTS) \
 		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
+
 	@echo ""
 	@echo "Copying st.cmd and databases..."
-	(stat "$(IOC_INSTANCE_PATH)/st.cmd" >/dev/null 2>&1 && chmod +w "$(IOC_INSTANCE_PATH)/st.cmd") || true
-	install -Sb "$(BUILD_PATH)/st.cmd" $(IOC_INSTANCE_PATH)
-	(stat $(BUILD_PATH)/*.db >/dev/null 2>&1 && install -Sb "$(BUILD_PATH)/*.db" $(IOC_INSTANCE_PATH)) || true
+	if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
+		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
+	fi 
+
+	@ for filename in "$(BUILD_PATH)"/{st.cmd,*.db} ; do \
+		echo "* Installing: $$(basename $$filename)"; \
+		install -Sbp "$$filename" "$(IOC_INSTANCE_PATH)"; \
+	done
+
 	chmod -w+x "$(IOC_INSTANCE_PATH)/st.cmd"
 	cd "$(IOC_INSTANCE_PATH)"
+
 	@echo ""
 	@echo "Build complete."
 
@@ -55,7 +64,7 @@ build:
 clean:
 	@echo ""
 	@echo "Cleaning..."
-	rm -f "$(BUILD_PATH)/st.cmd" "$(BUILD_PATH)/*.db"
+	rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db
 	rmdir "$(BUILD_PATH)"
 
 
