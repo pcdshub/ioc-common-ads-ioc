@@ -81,8 +81,8 @@ dbLoadRecords("{{ db.file }}", "{{ db.macros }}")
 {% endfor %}
 cd "$(TOP)"
 
-dbLoadRecords("db/iocAdmin.db", "P={{prefix}}{{delim}},IOC={{prefix}}{{delim}}" )
-dbLoadRecords("db/save_restoreStatus.db", "P={{prefix}}{{delim}},IOC={{name}}" )
+dbLoadRecords("db/iocAdmin.db", "IOC={{prefix}}")
+dbLoadRecords("db/save_restoreStatus.db", "P={{prefix}}{{delim}}")
 
 # Setup autosave
 set_savefile_path( "$(IOC_DATA)/$(IOC)/autosave" )
