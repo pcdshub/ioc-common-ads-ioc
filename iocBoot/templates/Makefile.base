@@ -52,6 +52,9 @@ build:
 		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
 	fi 
 
+	@echo "Copying envPaths..."
+	cp -f "$(TEMPLATE_PATH)"/envPaths "$(IOC_INSTANCE_PATH)"/envPaths
+
 	@ for filename in "$(BUILD_PATH)"/{st.cmd,*.db} ; do \
 		echo "* Installing: $$(basename $$filename)"; \
 		install -Sbp "$$filename" "$(IOC_INSTANCE_PATH)"; \
