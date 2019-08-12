@@ -67,8 +67,13 @@ build:
 clean:
 	@echo ""
 	@echo "Cleaning..."
-	rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db
-	rmdir "$(BUILD_PATH)"
+	@if [ -d "$(BUILD_PATH)" ]; then \
+		set -x; \
+		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db; \
+		rmdir "$(BUILD_PATH)"; \
+		set +x; \
+	fi
+	@echo "Done"
 
 
 .PHONY: default clean
