@@ -15,8 +15,8 @@ include $(TOP)/configure/CONFIG
 # Create and install (or just install)
 # Archive files, templates, substitutions like this
 #
-ARCHIVE += axis_archive.tpl-arch
-REQ += axis_autosave.tpl-req
+ARCHIVE +=
+REQ +=
 
 DB_INSTALLS += $(ETHERCATMC)/db/EthercatMC*.template
 
