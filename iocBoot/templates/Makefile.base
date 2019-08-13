@@ -21,7 +21,24 @@ BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
 
-default: build clean
+all: build clean
+
+help:
+	@echo "Available commands:"
+	@echo "    all:      builds the IOC and cleans the temporary files"
+	@echo "    build:    builds the st.cmd, databases, envPaths, etc."
+	@echo "    clean:    cleans temporary pytmc files in $(BUILD_PATH)"
+	@echo "    summary:  tool shortcut - display a PLC project summary"
+	@echo "    code:     tool shortcut - display a PLC code summary"
+	@echo "    outline:  tool shortcut - display an outline of tsproj, tmc, etc."
+	@echo "    debug:    tool shortcut - display a debug GUI for chains and records"
+	@echo "    types:    tool shortcut - display a debug GUI for PLC-defined data types"
+	@echo ""
+	@echo "Note that all tool shortcuts support passing additional arguments to pytmc"
+	@echo "through the ARGS environment variable.  For example:"
+	@echo "    $ make summary ARGS=--help"
+	@exit 1
+
 
 build:
 	@echo "-----------------------------------------------------------"
@@ -86,4 +103,29 @@ clean:
 	@echo "Done"
 
 
-.PHONY: default clean
+summary:
+	@echo "Generating a summary for the project. Use \`make $@ ARGS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc summary -a "$(call pyabspath,$(PROJECT_PATH))" $(ARGS)
+
+
+code:
+	@echo "Generating a summary of the code. Use \`make $@ ARGS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc summary --plcs --code "$(call pyabspath,$(PROJECT_PATH))" $(ARGS)
+
+
+outline:
+	@echo "Generating a project outline. Use \`make $@ ARGS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc summary --outline "$(call pyabspath,$(PROJECT_PATH))" $(ARGS)
+
+
+debug:
+	@echo "Running the debug GUI. Use \`make $@ ARGS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc debug "$(call pyabspath,$(PROJECT_PATH))" $(ARGS)
+
+
+types:
+	@echo "Running the data type debug GUI. Use \`make $@ ARGS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc types "$(call pyabspath,$(PROJECT_PATH))" $(ARGS)
+
+
+.PHONY: all clean summary code outline debug types
