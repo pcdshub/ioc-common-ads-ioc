@@ -6,5 +6,5 @@ TOP = $(IOC_APPL_TOP)
 endif
 
 include $(TOP)/configure/CONFIG
-DIRS += $(wildcard *ioc*)
+DIRS += $(wildcard *ioc*) templates
 include $(TOP)/configure/RULES_DIRS

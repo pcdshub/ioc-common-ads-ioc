@@ -1,0 +1,139 @@
+ifndef IOC_TOP
+$(error IOC_TOP is not set)
+endif 
+ifndef PROJECT_NAME
+$(error PROJECT_NAME is not set)
+endif
+
+ifndef PLC
+$(error PLC is not set)
+endif
+
+SHELL = /bin/bash
+PYTMC_OPTS ?=
+PREFIX ?=
+HOST_ARCH ?= rhel7-x86_64
+BINARY_PATH ?= $(IOC_TOP)/iocBoot/$(HOST_ARCH)/adsIoc
+PROJECT_PATH ?= $(IOC_INSTANCE_PATH)/../../$(PROJECT_NAME)/$(PROJECT_NAME).tsproj
+TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
+STCMD_TEMPLATE ?= st.cmd.template
+IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
+IOC_DATA_PATH ?= /reg/d/iocData
+BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
+# abspath is failing with spaces - falling back to Python here:
+pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
+
+all: build clean
+
+help:
+	@echo "Available commands:"
+	@echo "    all:      builds the IOC and cleans the temporary files"
+	@echo "    build:    builds the st.cmd, databases, envPaths, etc."
+	@echo "    clean:    cleans temporary pytmc files in $(BUILD_PATH)"
+	@echo "    paths:    make relevant directories (autosave, etc.)"
+	@echo "    summary:  tool shortcut - display a PLC project summary"
+	@echo "    code:     tool shortcut - display a PLC code summary"
+	@echo "    outline:  tool shortcut - display an outline of tsproj, tmc, etc."
+	@echo "    debug:    tool shortcut - display a debug GUI for chains and records"
+	@echo "    types:    tool shortcut - display a debug GUI for PLC-defined data types"
+	@echo ""
+	@echo "Note that all commands support passing additional arguments to pytmc"
+	@echo "through the PYTMC_OPTS environment variable.  For example:"
+	@echo "    $ make summary PYTMC_OPTS=--help"
+	@exit 1
+
+
+build:
+	@echo "-----------------------------------------------------------"
+	@echo "Build path: $(BUILD_PATH)"
+	@echo "PLC: $(PLC)"
+	@echo "IOC name: $(IOC_NAME)"
+	@echo "PYTMC_OPTS: $(PYTMC_OPTS)"
+	@echo "PROJECT_PATH: $(PROJECT_PATH)"
+	@echo "Absolute project path: " $(call pyabspath,$(PROJECT_PATH))
+	@echo "-----------------------------------------------------------"
+	@echo ""
+	@echo ""
+
+	mkdir -p "$(BUILD_PATH)"
+	@echo "Executing pytmc..."
+	cd "$(BUILD_PATH)" && \
+		pytmc stcmd \
+		--name "$(IOC_NAME)" \
+		--plc "$(PLC)" \
+		--template-path "$(TEMPLATE_PATH)" \
+		--template "$(STCMD_TEMPLATE)" \
+		--hashbang "$(BINARY_PATH)" \
+		-p "$(PREFIX)" \
+		$(PYTMC_OPTS) \
+		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
+
+	@echo ""
+	@echo "Copying st.cmd and databases..."
+	@ if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
+		echo "* Changing permissions on the old st.cmd..." \
+		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
+	fi 
+
+	@echo "Copying envPaths..."
+	cat "$(TEMPLATE_PATH)"/envPaths | \
+		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$(IOC_NAME)")/' \
+		> "$(IOC_INSTANCE_PATH)"/envPaths
+
+	# Add on any other envPaths:
+	echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
+
+	@ for filename in "$(BUILD_PATH)"/{st.cmd,*.db} ; do \
+		echo "* Installing: $$(basename $$filename)"; \
+		install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
+	done
+
+	chmod +x "$(IOC_INSTANCE_PATH)/st.cmd"
+	cd "$(IOC_INSTANCE_PATH)"
+
+	@echo ""
+	@echo "Build complete."
+
+
+clean:
+	@echo ""
+	@echo "Cleaning..."
+	@if [ -d "$(BUILD_PATH)" ]; then \
+		set -x; \
+		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db; \
+		rmdir "$(BUILD_PATH)"; \
+		set +x; \
+	fi
+	@echo "Done"
+
+
+paths:
+	@echo "Creating IOC data directory"
+	mkdir -p $(IOC_DATA_PATH)/$(IOC_NAME)/iocInfo
+
+summary:
+	@echo "Generating a summary for the project. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc summary -a "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
+
+
+code:
+	@echo "Generating a summary of the code. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc summary --plcs --code "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
+
+
+outline:
+	@echo "Generating a project outline. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc summary --outline "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
+
+
+debug:
+	@echo "Running the debug GUI. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc debug "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
+
+
+types:
+	@echo "Running the data type debug GUI. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc types "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
+
+
+.PHONY: all build clean paths summary code outline debug types
