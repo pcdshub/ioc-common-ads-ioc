@@ -1,7 +1,6 @@
 ifndef IOC_TOP
 $(error IOC_TOP is not set)
-endif
-
+endif 
 ifndef PROJECT_NAME
 $(error PROJECT_NAME is not set)
 endif
@@ -17,6 +16,7 @@ PREFIX ?=
 PROJECT_PATH ?= $(IOC_INSTANCE_PATH)/../../$(PROJECT_NAME)/$(PROJECT_NAME).tsproj
 TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
+IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
 BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
@@ -27,6 +27,7 @@ build:
 	@echo "-----------------------------------------------------------"
 	@echo "Build path: $(BUILD_PATH)"
 	@echo "PLC: $(PLC)"
+	@echo "IOC name: $(IOC_NAME)"
 	@echo "PYTMC_OPTS: $(PYTMC_OPTS)"
 	@echo "PROJECT_PATH: $(PROJECT_PATH)"
 	@echo "Absolute project path: " $(call pyabspath,$(PROJECT_PATH))
@@ -38,6 +39,7 @@ build:
 	@echo "Executing pytmc..."
 	cd "$(BUILD_PATH)" && \
 		pytmc stcmd \
+		--name "$(IOC_NAME)" \
 		--plc "$(PLC)" \
 		--template-path "$(TEMPLATE_PATH)" \
 		--template "$(STCMD_TEMPLATE)" \
@@ -53,7 +55,12 @@ build:
 	fi 
 
 	@echo "Copying envPaths..."
-	cp -f "$(TEMPLATE_PATH)"/envPaths "$(IOC_INSTANCE_PATH)"/envPaths
+	cat "$(TEMPLATE_PATH)"/envPaths | \
+		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$(IOC_NAME)")/' \
+		> "$(IOC_INSTANCE_PATH)"/envPaths
+
+	# Add on any other envPaths:
+	echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
 
 	@ for filename in "$(BUILD_PATH)"/{st.cmd,*.db} ; do \
 		echo "* Installing: $$(basename $$filename)"; \
