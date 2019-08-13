@@ -83,7 +83,7 @@ dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},{{ db.macros }}")
 {% endif %}
 cd "$(IOC_TOP)"
 
-dbLoadRecords("db/iocAdmin.db", "IOC={{prefix}}")
+dbLoadRecords("db/iocSoft.db", "IOC={{prefix}}")
 dbLoadRecords("db/save_restoreStatus.db", "P={{prefix}}{{delim}}")
 
 # Setup autosave
