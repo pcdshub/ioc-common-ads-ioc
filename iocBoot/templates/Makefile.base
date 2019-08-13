@@ -85,10 +85,10 @@ build:
 
 	@ for filename in "$(BUILD_PATH)"/{st.cmd,*.db} ; do \
 		echo "* Installing: $$(basename $$filename)"; \
-		install -Sbp "$$filename" "$(IOC_INSTANCE_PATH)"; \
+		install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
 	done
 
-	chmod -w+x "$(IOC_INSTANCE_PATH)/st.cmd"
+	chmod +x "$(IOC_INSTANCE_PATH)/st.cmd"
 	cd "$(IOC_INSTANCE_PATH)"
 
 	@echo ""
