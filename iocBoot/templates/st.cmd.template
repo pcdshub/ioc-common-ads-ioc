@@ -75,10 +75,13 @@ dbLoadRecords("EthercatMCdebug.template", "PREFIX=$(MOTOR_PREFIX), MOTOR_NAME=$(
 
 {% endfor %}
 {% endif %}
+{% if additional_db_files %}
+cd "$(IOC_TOP)"
 {% for db in additional_db_files %}
 dbLoadRecords("{{ db.file }}", "{{ db.macros }}")
 
 {% endfor %}
+{% endif %}
 cd "$(TOP)"
 
 dbLoadRecords("db/iocAdmin.db", "IOC={{prefix}}")
