@@ -18,7 +18,7 @@ PROJECT_PATH ?= $(IOC_INSTANCE_PATH)/../../$(PROJECT_NAME)/$(PROJECT_NAME).tspro
 TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
 IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
-IOC_DATA_PATH ?= /nfs/slac/g/lcls/epics/ioc/data
+IOC_DATA_PATH ?= /reg/d/iocData
 BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
