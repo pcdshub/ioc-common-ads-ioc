@@ -10,9 +10,10 @@ $(error PLC is not set)
 endif
 
 SHELL = /bin/bash
-BINARY ?=
 PYTMC_OPTS ?=
 PREFIX ?=
+HOST_ARCH ?= rhel7-x86_64
+BINARY_PATH ?= $(IOC_TOP)/iocBoot/$(HOST_ARCH)/adsIoc
 PROJECT_PATH ?= $(IOC_INSTANCE_PATH)/../../$(PROJECT_NAME)/$(PROJECT_NAME).tsproj
 TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
@@ -60,6 +61,7 @@ build:
 		--plc "$(PLC)" \
 		--template-path "$(TEMPLATE_PATH)" \
 		--template "$(STCMD_TEMPLATE)" \
+		--hashbang "$(BINARY_PATH)" \
 		-p "$(PREFIX)" \
 		$(PYTMC_OPTS) \
 		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
