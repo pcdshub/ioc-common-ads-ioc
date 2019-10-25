@@ -69,40 +69,39 @@ build:
 		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
 
 	@echo ""
-	@echo "Copying st.cmd and databases..."
+	@echo "* Copying st.cmd and databases..."
 	@ if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
 		echo "* Changing permissions on the old st.cmd..." \
 		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
 	fi 
 
-	@echo "Copying envPaths..."
-	cat "$(TEMPLATE_PATH)"/envPaths | \
+	@echo "* Copying envPaths..."
+	@cat "$(TEMPLATE_PATH)"/envPaths | \
 		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$(IOC_NAME)")/' \
 		> "$(IOC_INSTANCE_PATH)"/envPaths
+	@echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
 
-	# Add on any other envPaths:
-	echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
-
-	@ for filename in "$(BUILD_PATH)"/{st.cmd,*.db} ; do \
+	@shopt -s nullglob; \
+	for filename in "$(BUILD_PATH)"/{st.cmd,*.db}; \
+	do \
 		echo "* Installing: $$(basename $$filename)"; \
 		install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
 	done
 
-	chmod +x "$(IOC_INSTANCE_PATH)/st.cmd"
-	cd "$(IOC_INSTANCE_PATH)"
+	@chmod +x "$(IOC_INSTANCE_PATH)/st.cmd"
 
+	@cd "$(IOC_INSTANCE_PATH)"
 	@echo ""
 	@echo "Build complete."
 
 
 clean:
 	@echo ""
-	@echo "Cleaning..."
+	@echo "* Cleaning..."
 	@if [ -d "$(BUILD_PATH)" ]; then \
-		set -x; \
+		shopt -s nullglob; \
 		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db; \
 		rmdir "$(BUILD_PATH)"; \
-		set +x; \
 	fi
 	@echo "Done"
 
