@@ -71,7 +71,7 @@ build:
 	@echo ""
 	@echo "* Copying st.cmd and databases..."
 	@ if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
-		echo "* Changing permissions on the old st.cmd..." \
+		echo "* Changing permissions on the old st.cmd..."; \
 		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
 	fi 
 

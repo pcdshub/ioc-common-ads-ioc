@@ -28,8 +28,7 @@ cd "$(ADS_IOC_TOP)/db"
 
 epicsEnvSet("MOTOR_PORT",    "{{motor_port}}")
 epicsEnvSet("PREFIX",        "{{prefix}}{{delim}}")
-epicsEnvSet("ECM_NUMAXES",   "{{symbols.Symbol_DUT_MotionStage|length}}")
-epicsEnvSet("NUMAXES",       "{{symbols.Symbol_DUT_MotionStage|length}}")
+epicsEnvSet("NUMAXES",       "{{nc.axis_by_id|max}}")
 
 EthercatMCCreateController("$(MOTOR_PORT)", "$(ASYN_PORT)", "$(NUMAXES)", "200", "1000")
 
