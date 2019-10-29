@@ -11,7 +11,7 @@ IOCADMIN_MODULE_VERSION   = R3.1.15-1.10.0
 ASYN_MODULE_VERSION       = R4.35-0.0.1
 MOTOR_MODULE_VERSION      = R6.9-ess-0.0.1
 ETHERCATMC_MODULE_VERSION = R2.1.0-0.1.0
-ADS_MODULE_VERSION        = R2.0.0-0.0.3
+ADS_MODULE_VERSION        = R2.0.0-0.0.4
 
 
 # ============================================================
