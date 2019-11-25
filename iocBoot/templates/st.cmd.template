@@ -108,7 +108,7 @@ dbLoadRecords("EthercatMCdebug.template", "PREFIX=$(MOTOR_PREFIX), MOTOR_NAME=$(
 {% if additional_db_files %}
 cd "$(IOC_TOP)"
 {% for db in additional_db_files %}
-dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},{{ db.macros }}")
+dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{delim}},IOCNAME=$(IOCNAME),{{ db.macros }}")
 
 {% endfor %}
 {% endif %}
