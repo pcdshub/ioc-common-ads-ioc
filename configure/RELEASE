@@ -11,7 +11,7 @@ IOCADMIN_MODULE_VERSION   = R3.1.15-1.10.0
 ASYN_MODULE_VERSION       = R4.35-0.0.1
 MOTOR_MODULE_VERSION      = R6.9-ess-0.0.1
 ETHERCATMC_MODULE_VERSION = R2.1.0-0.1.0
-ADS_MODULE_VERSION        = R2.0.0-0.0.4
+ADS_MODULE_VERSION        = R2.0.0-0.0.5
 
 
 # ============================================================
@@ -33,6 +33,8 @@ ETHERCATMC=$(EPICS_MODULES)/ethercatmc/$(ETHERCATMC_MODULE_VERSION)
 MOTOR=$(EPICS_MODULES)/motor/$(MOTOR_MODULE_VERSION)
 ASYN=$(EPICS_MODULES)/asyn/$(ASYN_MODULE_VERSION)
 ADS=$(EPICS_MODULES)/twincat-ads/$(ADS_MODULE_VERSION)
+
+#MY_MODULES=/reg/neh/home4/mcbrowne/git/modules
 
 # ===============================================================
 # Define the location and version of EPICS base
