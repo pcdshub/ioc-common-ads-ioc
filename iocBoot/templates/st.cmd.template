@@ -20,7 +20,7 @@ epicsEnvSet("ASYN_PORT",        "{{asyn_port}}")
 epicsEnvSet("IPADDR",           "{{plc_ip}}")
 epicsEnvSet("AMSID",            "{{plc_ams_id}}")
 epicsEnvSet("AMS_PORT",         "{{plc_ads_port}}")
-epicsEnvSet("ADS_MAX_PARAMS",   "2000")
+epicsEnvSet("ADS_MAX_PARAMS",   "10000")
 epicsEnvSet("ADS_SAMPLE_MS",    "50")
 epicsEnvSet("ADS_MAX_DELAY_MS", "100")
 epicsEnvSet("ADS_TIMEOUT_MS",   "1000")
@@ -107,8 +107,8 @@ dbLoadRecords("EthercatMCdebug.template", "PREFIX=$(MOTOR_PREFIX), MOTOR_NAME=$(
 {% endfor %}
 {% endif %}
 
-dbLoadRecords("db/iocSoft.db", "IOC={{prefix}}")
-dbLoadRecords("db/save_restoreStatus.db", "P={{prefix}}{{delim}}")
+dbLoadRecords("iocSoft.db", "IOC={{prefix}}")
+dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{delim}}")
 
 cd "$(IOC_TOP)"
 
@@ -137,7 +137,10 @@ cd "$(IOC_TOP)"
 iocInit()
 
 # Start autosave backups
-create_monitor_set( "$(IOC).req", 5, "" )
+cd "$(IOC_TOP)/autosave"
+create_monitor_set( "info_positions.req", 10, "" )
+create_monitor_set( "info_settings.req", 60, "" )
+cd "$(IOC_TOP)"
 
 # All IOCs should dump some common info after initial startup.
 < /reg/d/iocCommon/All/post_linux.cmd

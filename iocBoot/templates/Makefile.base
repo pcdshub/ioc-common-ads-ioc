@@ -109,6 +109,9 @@ clean:
 paths:
 	@echo "Creating IOC data directory"
 	mkdir -p $(IOC_DATA_PATH)/$(IOC_NAME)/iocInfo
+	@echo "Creating autosave files directory"
+	mkdir -p "$(IOC_INSTANCE_PATH)/autosave"
+	@chmod 777 "$(IOC_INSTANCE_PATH)/autosave"
 
 summary:
 	@echo "Generating a summary for the project. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
