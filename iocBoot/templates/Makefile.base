@@ -19,6 +19,7 @@ TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
 IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
 IOC_DATA_PATH ?= /reg/d/iocData
+ARCHIVE_PATH ?= $(IOC_DATA_PATH)/archive
 BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
@@ -43,6 +44,69 @@ help:
 	@exit 1
 
 
+st.cmd:
+	@echo "Executing pytmc stcmd: creating st.cmd..."
+	cd "$(BUILD_PATH)" && \
+		pytmc stcmd \
+		--name "$(IOC_NAME)" \
+		--plc "$(PLC)" \
+		--template-path "$(TEMPLATE_PATH)" \
+		--template "$(STCMD_TEMPLATE)" \
+		--hashbang "$(BINARY_PATH)" \
+		--only-motor \
+		-p "$(PREFIX)" \
+		$(PYTMC_OPTS) \
+		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
+
+db:
+	@echo "Executing pytmc db: creating $(PLC).db and $(PLC).archive..."
+	cd "$(BUILD_PATH)" && \
+		pytmc db \
+		--plc "$(PLC)" \
+		"$(call pyabspath,$(PROJECT_PATH))" \
+		"$(PLC).db"
+
+envPaths:
+	@echo "* Copying envPaths and fixing IOC_TOP..."
+	@cat "$(TEMPLATE_PATH)"/envPaths | \
+		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$(IOC_NAME)")/' \
+		> "$(IOC_INSTANCE_PATH)"/envPaths
+	@echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
+
+
+install:
+	@echo ""
+	@echo "* Copying st.cmd and databases..."
+	@ if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
+		echo "* Changing permissions on the old st.cmd..."; \
+		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
+	fi 
+
+	@shopt -s nullglob; \
+	for filename in "$(BUILD_PATH)"/{st.cmd,*.db}; \
+	do \
+		echo "* Installing: $$(basename $$filename)"; \
+		install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
+	done
+
+	@chmod +x "$(IOC_INSTANCE_PATH)/st.cmd"
+
+	@shopt -s nullglob; \
+	for filename in "$(BUILD_PATH)"/*.archive; \
+	do \
+		if [ -d "$(ARCHIVE_PATH)" ]; then \
+			echo "* Installing archive file: $$(basename $$filename)"; \
+			install -p -m 0444 "$$filename" "$(ARCHIVE_PATH)"; \
+		else \
+			echo "* Warning: ${IOC_DATA_PATH}/${IOC_NAME}/iocInfo does not exist;" \
+				"copying archive file to the IOC instance path."; \
+			install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
+		fi; \
+	done
+
+	@cd "$(IOC_INSTANCE_PATH)"
+
+
 build:
 	@echo "-----------------------------------------------------------"
 	@echo "Build path: $(BUILD_PATH)"
@@ -56,41 +120,12 @@ build:
 	@echo ""
 
 	mkdir -p "$(BUILD_PATH)"
-	@echo "Executing pytmc..."
-	cd "$(BUILD_PATH)" && \
-		pytmc stcmd \
-		--name "$(IOC_NAME)" \
-		--plc "$(PLC)" \
-		--template-path "$(TEMPLATE_PATH)" \
-		--template "$(STCMD_TEMPLATE)" \
-		--hashbang "$(BINARY_PATH)" \
-		-p "$(PREFIX)" \
-		$(PYTMC_OPTS) \
-		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
 
-	@echo ""
-	@echo "* Copying st.cmd and databases..."
-	@ if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
-		echo "* Changing permissions on the old st.cmd..."; \
-		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
-	fi 
+	@$(MAKE) st.cmd
+	@$(MAKE) db
+	@$(MAKE) envPaths
+	@$(MAKE) install
 
-	@echo "* Copying envPaths..."
-	@cat "$(TEMPLATE_PATH)"/envPaths | \
-		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$(IOC_NAME)")/' \
-		> "$(IOC_INSTANCE_PATH)"/envPaths
-	@echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
-
-	@shopt -s nullglob; \
-	for filename in "$(BUILD_PATH)"/{st.cmd,*.db}; \
-	do \
-		echo "* Installing: $$(basename $$filename)"; \
-		install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
-	done
-
-	@chmod +x "$(IOC_INSTANCE_PATH)/st.cmd"
-
-	@cd "$(IOC_INSTANCE_PATH)"
 	@echo ""
 	@echo "Build complete."
 
@@ -100,7 +135,7 @@ clean:
 	@echo "* Cleaning..."
 	@if [ -d "$(BUILD_PATH)" ]; then \
 		shopt -s nullglob; \
-		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db; \
+		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive; \
 		rmdir "$(BUILD_PATH)"; \
 	fi
 	@echo "Done"
@@ -138,4 +173,4 @@ types:
 	pytmc types "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-.PHONY: all build clean paths summary code outline debug types
+.PHONY: all st.cmd db envPaths install build clean paths summary code outline debug types

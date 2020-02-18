@@ -119,6 +119,8 @@ dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{delim}},
 {% endfor %}
 {% endif %}
 
+## Placeholder for loading additional database files ##
+
 # Setup autosave
 set_savefile_path( "$(IOC_DATA)/$(IOC)/autosave" )
 set_requestfile_path( "$(IOC_TOP)/autosave" )
