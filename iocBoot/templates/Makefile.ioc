@@ -6,6 +6,6 @@ PROJECT_PATH := {{ tsproj_path }}
 PLC = {{ plc_name }}
 
 PYTMC_OPTS = 
-PREFIX = PREFIX:
+PREFIX = PREFIX
 
 include $(IOC_TOP)/iocBoot/templates/Makefile.base
