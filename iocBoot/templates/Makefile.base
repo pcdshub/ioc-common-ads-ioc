@@ -21,6 +21,7 @@ IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
 IOC_DATA_PATH ?= /reg/d/iocData
 ARCHIVE_PATH ?= $(IOC_DATA_PATH)/archive
 BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
+DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOCNAME)'
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
 
@@ -82,14 +83,27 @@ install:
 		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
 	fi 
 
-	@shopt -s nullglob; \
-	for filename in "$(BUILD_PATH)"/{st.cmd,*.db}; \
-	do \
-		echo "* Installing: $$(basename $$filename)"; \
-		install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
-	done
+	@if test -n `shopt -s nullglob; echo "$(BUILD_PATH)"/*.db`; then \
+		echo "* Found database files to install; creating load_plc_databases.cmd..."; \
+		find $(BUILD_PATH) -name '*.db' -print0 | \
+			PREFIX=$(PREFIX) DELIM=":" DB_PARAMETERS=$(DB_PARAMETERS) \
+			python $(TEMPLATE_PATH)/dbloads.py \
+			> "$(BUILD_PATH)/load_plc_databases.cmd"; \
+		\
+		for filename in "$(BUILD_PATH)"/*.db; \
+		do \
+			echo "* Installing: $$(basename $$filename)"; \
+			install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
+		done \
+	else \
+		touch "$(BUILD_PATH)/load_plc_databases.cmd"; \
+	fi
 
-	@chmod +x "$(IOC_INSTANCE_PATH)/st.cmd"
+	@echo "* Installing: st.cmd"
+	install -p -m 0555 "$(BUILD_PATH)/st.cmd" "$(IOC_INSTANCE_PATH)";
+
+	@echo "* Installing: load_plc_databases.cmd"
+	install -p -m 0444 "$(BUILD_PATH)/load_plc_databases.cmd" "$(IOC_INSTANCE_PATH)";
 
 	@shopt -s nullglob; \
 	for filename in "$(BUILD_PATH)"/*.archive; \
@@ -135,7 +149,8 @@ clean:
 	@echo "* Cleaning..."
 	@if [ -d "$(BUILD_PATH)" ]; then \
 		shopt -s nullglob; \
-		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive; \
+		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/load_plc_databases.cmd \
+			  "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive; \
 		rmdir "$(BUILD_PATH)"; \
 	fi
 	@echo "Done"
