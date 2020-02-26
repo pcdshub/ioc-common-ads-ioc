@@ -112,6 +112,9 @@ dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{delim}}")
 
 cd "$(IOC_TOP)"
 
+## Database files ##
+< "$(IOC_TOP)/load_plc_databases.cmd"
+
 {% if additional_db_files %}
 {% for db in additional_db_files %}
 dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{delim}},IOCNAME=$(IOCNAME),{{ db.macros }}")

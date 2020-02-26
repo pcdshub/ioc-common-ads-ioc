@@ -1,11 +1,14 @@
 IOC_TOP = {{ template_path.parent.parent }}
 IOC_INSTANCE_PATH := $(shell pwd)
 
-PROJECT_NAME = {{ project_name }}
-PROJECT_PATH := {{ tsproj_path }}
-PLC = {{ plc_name }}
+# Set PRODUCTION_IOC to 1 to move from a testing to a production IOC:
+PRODUCTION_IOC := 0
 
-PYTMC_OPTS = 
-PREFIX = PREFIX
+PROJECT_NAME := {{ project_name }}
+PROJECT_PATH := {{ tsproj_path }}
+PLC := {{ plc_name }}
+
+PYTMC_OPTS := 
+PREFIX := PREFIX
 
 include $(IOC_TOP)/iocBoot/templates/Makefile.base
