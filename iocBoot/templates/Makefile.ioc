@@ -1,7 +1,7 @@
 IOC_TOP = {{ template_path.parent.parent }}
 IOC_INSTANCE_PATH := $(shell pwd)
 
-# Set the next line to 1 to move from a testing to a production IOC:
+# Set PRODUCTION_IOC to 1 to move from a testing to a production IOC:
 PRODUCTION_IOC := 0
 
 PROJECT_NAME := {{ project_name }}
