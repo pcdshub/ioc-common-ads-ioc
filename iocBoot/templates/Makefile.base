@@ -18,7 +18,14 @@ PROJECT_PATH ?= $(IOC_INSTANCE_PATH)/../../$(PROJECT_NAME)/$(PROJECT_NAME).tspro
 TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
 IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
-IOC_DATA_PATH ?= /reg/d/iocData
+PRODUCTION_IOC ?= 0
+
+ifeq ($(PRODUCTION_IOC), 1)
+	IOC_DATA_PATH ?= /reg/d/iocData
+else
+	IOC_DATA_PATH ?= $(HOME)/iocData
+endif
+
 ARCHIVE_PATH ?= $(IOC_DATA_PATH)/archive
 BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
 DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOCNAME)'
@@ -73,7 +80,7 @@ envPaths:
 		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$(IOC_NAME)")/' \
 		> "$(IOC_INSTANCE_PATH)"/envPaths
 	@echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
-
+	@echo 'epicsEnvSet("IOC_DATA", "$(IOC_DATA_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
 
 install:
 	@echo ""
