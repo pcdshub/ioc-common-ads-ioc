@@ -5,6 +5,7 @@ record(longout, "$(PREFIX)$(MOTOR_NAME)-PwrCNEN")
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_STATUS_GAIN_SUPPORT")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(longout, "$(PREFIX)$(MOTOR_NAME)-PwrAuto")
@@ -13,6 +14,7 @@ record(longout, "$(PREFIX)$(MOTOR_NAME)-PwrAuto")
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_POWER_AUTO_ONOFF")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(PREFIX)$(MOTOR_NAME)-PwrOnDly")
@@ -21,6 +23,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-PwrOnDly")
     field(DTYP, "asynFloat64")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_POWER_ON_DELAY")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(PREFIX)$(MOTOR_NAME)-PwrOffDly")
@@ -29,6 +32,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-PwrOffDly")
     field(DTYP, "asynFloat64")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_POWER_OFF_DELAY")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 # Records that allow to talk to the model 3 driver
@@ -39,6 +43,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-MoveAbs")
     field(DTYP, "asynFloat64")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_MOVE_ABS")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(PREFIX)$(MOTOR_NAME)-MoveRel")
@@ -47,6 +52,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-MoveRel")
     field(DTYP, "asynFloat64")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_MOVE_REL")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(PREFIX)$(MOTOR_NAME)-MoveVel")
@@ -55,6 +61,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-MoveVel")
     field(DTYP, "asynFloat64")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_MOVE_VEL")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(PREFIX)$(MOTOR_NAME)-ACCS")
@@ -63,6 +70,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-ACCS")
     field(DTYP, "asynFloat64")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_ACCEL")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(PREFIX)$(MOTOR_NAME)-VELO")
@@ -71,6 +79,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-VELO")
     field(DTYP, "asynFloat64")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_VELOCITY")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 
@@ -80,6 +89,7 @@ record(longout, "$(PREFIX)$(MOTOR_NAME)-Stop")
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_STOP_AXIS")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(stringout, "$(PREFIX)$(MOTOR_NAME)-DbgStrToMCU") {
@@ -87,6 +97,7 @@ record(stringout, "$(PREFIX)$(MOTOR_NAME)-DbgStrToMCU") {
     field(VAL, "")
     field(DTYP, "asynOctetWrite")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))StrToMCU")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(ao,"$(PREFIX)$(MOTOR_NAME)-CfgDHLM") {
@@ -96,6 +107,7 @@ record(ao,"$(PREFIX)$(MOTOR_NAME)-CfgDHLM") {
     field(PREC,"$(PREC)")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))CfgDHLM")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(ao,"$(PREFIX)$(MOTOR_NAME)-CfgDLLM") {
@@ -105,6 +117,7 @@ record(ao,"$(PREFIX)$(MOTOR_NAME)-CfgDLLM") {
     field(PREC,"$(PREC)")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))CfgDLLM")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(longout,"$(PREFIX)$(MOTOR_NAME)-CfgDHLM-En") {
@@ -113,6 +126,7 @@ record(longout,"$(PREFIX)$(MOTOR_NAME)-CfgDHLM-En") {
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))CfgDHLM-En")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(longout,"$(PREFIX)$(MOTOR_NAME)-CfgDLLM-En") {
@@ -120,6 +134,7 @@ record(longout,"$(PREFIX)$(MOTOR_NAME)-CfgDLLM-En") {
     field(VAL,  0)
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))CfgDLLM-En")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgVELO")
@@ -129,6 +144,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgVELO")
     field(PREC,"$(PREC)")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))CfgVELO")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgVMAX")
 {
@@ -137,6 +153,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgVMAX")
     field(PREC,"$(PREC)")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))CfgVMAX")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgJVEL")
 {
@@ -145,6 +162,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgJVEL")
     field(PREC,"$(PREC)")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))CfgJVEL")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgACCS")
 {
@@ -153,6 +171,7 @@ record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgACCS")
     field(PREC,"$(PREC)")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))CfgACCS")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 record(longout,"$(PREFIX)$(MOTOR_NAME)-DrvUseEGU") {
@@ -160,6 +179,7 @@ record(longout,"$(PREFIX)$(MOTOR_NAME)-DrvUseEGU") {
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_FLAGS_DRIVER_USES_EGU")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 
 
@@ -198,6 +218,7 @@ record(ao,"$(PREFIX)$(MOTOR_NAME)-M3RHLMo_") {
     field(PREC,"$(PREC)")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_HIGH_LIMIT")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
 record(ao,"$(PREFIX)$(MOTOR_NAME)-M3RLLMo_") {
     field(DESC, "Driver Low Soft Limit")
@@ -205,4 +226,5 @@ record(ao,"$(PREFIX)$(MOTOR_NAME)-M3RLLMo_") {
     field(PREC,"$(PREC)")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_LOW_LIMIT")
     info(asyn:READBACK,"1")
+    info(autosaveFields_pass0, "VAL")
 }
