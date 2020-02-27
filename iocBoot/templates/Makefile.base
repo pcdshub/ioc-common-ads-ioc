@@ -26,7 +26,7 @@ else
 	IOC_DATA_PATH ?= $(HOME)/iocData
 endif
 
-ARCHIVE_PATH ?= $(IOC_DATA_PATH)/archive
+ARCHIVE_PATH ?= $(IOC_DATA_PATH)/$(IOC_NAME)/archive
 BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
 DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOCNAME)'
 # abspath is failing with spaces - falling back to Python here:
@@ -119,7 +119,7 @@ install:
 			echo "* Installing archive file: $$(basename $$filename)"; \
 			install -p -m 0444 "$$filename" "$(ARCHIVE_PATH)"; \
 		else \
-			echo "* Warning: ${IOC_DATA_PATH}/${IOC_NAME}/iocInfo does not exist;" \
+			echo "* Warning: ${ARCHIVE_PATH} does not exist;" \
 				"copying archive file to the IOC instance path."; \
 			install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
 		fi; \
@@ -165,10 +165,9 @@ clean:
 
 paths:
 	@echo "Creating IOC data directory"
-	mkdir -p $(IOC_DATA_PATH)/$(IOC_NAME)/iocInfo
+	install --mode 0775 --group ps-ioc --directory $(IOC_DATA_PATH)/$(IOC_NAME)/{iocInfo,archive,logs,autosave}
 	@echo "Creating autosave files directory"
-	mkdir -p "$(IOC_INSTANCE_PATH)/autosave"
-	@chmod 777 "$(IOC_INSTANCE_PATH)/autosave"
+	install --mode 0775 --group ps-ioc --directory $(IOC_INSTANCE_PATH)/autosave
 
 summary:
 	@echo "Generating a summary for the project. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
