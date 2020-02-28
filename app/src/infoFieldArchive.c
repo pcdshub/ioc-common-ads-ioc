@@ -3,16 +3,12 @@
 #define VERSION "0.0"
 
 #include    <stdio.h>
-#include    <errno.h>
 #include    <stdlib.h>
 #include    <string.h>
-#include    <ctype.h>
 #include    <dbAccess.h>    /* includes dbDefs.h, dbBase.h, dbAddr.h, dbFldTypes.h */
 #include    <dbStaticLib.h>
 #include    <errlog.h>
 #include    <iocsh.h>
-#include    <special.h>
-#include    <epicsString.h>
 #include    <epicsStdio.h>
 #include    <epicsExport.h>
 
@@ -31,6 +27,8 @@
 #define ARCHIVE_DEFAULT_MONITOR  0
 // Default interval is 1 second
 #define ARCHIVE_DEFAULT_INTERVAL "1"
+
+#define ARCHIVE_DEBUG            0
 
 
 typedef struct {
@@ -75,8 +73,10 @@ int parseArchiveInfoString(const char *info_string, ArchiveSettings *settings) {
         is_monitor = !strcmp(token, "monitor");
         is_scan = !strcmp(token, "scan");
 
+#if ARCHIVE_DEBUG
         printf("%s is_monitor=%d is_scan=%d (is_new_entry=%d)\n",
                  token, is_monitor, is_scan, is_new_entry);
+#endif
         if (is_monitor || is_scan || section_idx == -1) {
             section_idx++;
             if (settings->num_entries == MAX_ARCHIVE_ENTRIES) {
@@ -151,6 +151,23 @@ void dumpArchiveSettings(ArchiveSettings *settings, FILE *fp) {
 }
 
 
+void archiveSettingsToFile(const char *record_name, ArchiveSettings *settings, FILE *fp) {
+    int entry_idx = 0;
+    int field_idx;
+    ArchiveEntry *entry;
+    for (; entry_idx < settings->num_entries; entry_idx++) {
+        entry = &settings->entries[entry_idx];
+        for (field_idx=0; field_idx < entry->num_fields; field_idx++) {
+            fprintf(fp, "%s.%s\t%s", record_name, entry->fields[field_idx],
+                    entry->interval_string);
+            if (entry->is_monitor) {
+                fprintf(fp, "\tmonitor");
+            }
+            fprintf(fp, "\n");
+        }
+    }
+}
+
 /*
  * Look through the database for info nodes with the specified info_pattern
  * (glob match), and get the associated info_value string.  Interpret this
@@ -160,31 +177,44 @@ void dumpArchiveSettings(ArchiveSettings *settings, FILE *fp) {
 static void makeArchiveFromDbInfo(const char *fname, char *info_pattern)
 {
     DBENTRY         dbentry;
-    FILE            *out_fd;
+    FILE            *fp;
     ArchiveSettings settings;
+    const char      *record_name;
+    int             num_records = 0;
 
     if (!pdbbase) {
         errlogPrintf("infoFieldArchive:makeArchiveFromDbInfo: No Database Loaded\n");
         return;
     }
 
-    if ((out_fd = fopen(fname,"w")) == NULL) {
+    if ((fp = fopen(fname,"w")) == NULL) {
         errlogPrintf("infoFieldArchive:makeArchiveFromDbInfo - unable to open file '%s'\n", fname);
         return;
     }
 
+    fprintf(fp, "# AUTO GENERATED Archive Appliance cron-job-compatible settings\n");
+    fprintf(fp, "# Do not modify by hand.\n\n");
     dbInitEntry(pdbbase, &dbentry);
     while (dbNextMatchingInfo(&dbentry, info_pattern) == 0)
     {
-        printf("%s info(%s, \"%s\")\n", dbGetRecordName(&dbentry),
+        record_name = dbGetRecordName(&dbentry);
+#if ARCHIVE_DEBUG
+        printf("%s info(%s, \"%s\")\n", record_name,
             dbGetInfoName(&dbentry), dbGetInfoString(&dbentry));
+#endif
+
         if (parseArchiveInfoString(dbGetInfoString(&dbentry), &settings)) {
+#if ARCHIVE_DEBUG
             dumpArchiveSettings(&settings, stdout);
+            archiveSettingsToFile(record_name, &settings, stdout);
+#endif
+            archiveSettingsToFile(record_name, &settings, fp);
+            num_records++;
         }
     }
+    printf("makeArchiveFromDbInfo: Wrote archive settings file containing %d records\n", num_records);
     dbFinishEntry(&dbentry);
-
-    fclose(out_fd);
+    fclose(fp);
     return;
 }
 
