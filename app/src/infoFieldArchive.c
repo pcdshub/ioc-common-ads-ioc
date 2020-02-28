@@ -58,11 +58,6 @@ int parseArchiveInfoString(const char *info_string, ArchiveSettings *settings) {
     }
     memset(settings, 0, sizeof(ArchiveSettings));
 
-    // [(scan/monitor) (rate in seconds)[:]] (fields)
-    // e.g., scan 1: FLD1 FLD2 FLD3
-    //       scan 2  FLD1 FLD2 FLD3
-    //       monitor 1 FLD1
-
     tofree = string = strdup(info_string);
     assert(string != NULL);
 
@@ -171,8 +166,15 @@ void archiveSettingsToFile(const char *record_name, ArchiveSettings *settings, F
 /*
  * Look through the database for info nodes with the specified info_pattern
  * (glob match), and get the associated info_value string.  Interpret this
- * string as a list of field names.  Write the accumulated PVs to the file
- * <fileBaseName>.
+ * string as a list of field names in the following format:
+ *
+ *  [(scan/monitor) (rate in seconds)[:]] [field1 [field2 [...]]]
+ *  e.g., scan 1: FLD1 FLD2 FLD3
+ *        scan 2  FLD1 FLD2 FLD3
+ *        monitor 1 FLD1
+ *
+ * The info node may contain one or more of these items.
+ * Write the accumulated PVs to the file <fname>.
  * */
 static void makeArchiveFromDbInfo(const char *fname, char *info_pattern)
 {
