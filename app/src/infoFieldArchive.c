@@ -84,13 +84,13 @@ int parseArchiveInfoString(const char *info_string, ArchiveSettings *settings) {
             if (is_monitor || is_scan) {
                 entry->is_monitor = is_monitor;
                 is_new_entry = 1;
+                continue;
             } else {
                 // Use defaults
                 strncpy(entry->interval_string, ARCHIVE_DEFAULT_INTERVAL,
                         MAX_INTERVAL_STRING);
                 entry->is_monitor = ARCHIVE_DEFAULT_MONITOR;
             }
-            continue;
         } else if (is_new_entry == 1) {
             // TODO: verify it's actually the interval. strtod(token, ...); errno
             strncpy(entry->interval_string, token, MAX_INTERVAL_STRING);
