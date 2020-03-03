@@ -19,6 +19,7 @@ TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
 IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
 PRODUCTION_IOC ?= 0
+PYTMC_MIN_VERSION ?= 2.6.0
 
 ifeq ($(PRODUCTION_IOC), 1)
 	IOC_DATA_PATH ?= /reg/d/iocData
@@ -52,7 +53,10 @@ help:
 	@exit 1
 
 
-st.cmd:
+_check_versions:
+	@python -c "import sys, pytmc, distutils.version; print('* Found pytmc v', pytmc.__version__); sys.exit(not (distutils.version.LooseVersion(pytmc.__version__) >= distutils.version.LooseVersion('$(PYTMC_MIN_VERSION)')))" || (echo "A newer pytmc is required: >= $(PYTMC_MIN_VERSION)" && exit 1)
+
+st.cmd: _check_versions
 	@echo "Executing pytmc stcmd: creating st.cmd..."
 	cd "$(BUILD_PATH)" && \
 		pytmc stcmd \
@@ -66,7 +70,7 @@ st.cmd:
 		$(PYTMC_OPTS) \
 		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
 
-db:
+db: _check_versions
 	@echo "Executing pytmc db: creating $(PLC).db and $(PLC).archive..."
 	cd "$(BUILD_PATH)" && \
 		pytmc db \
@@ -169,29 +173,29 @@ paths:
 	@echo "Creating autosave files directory"
 	install --mode 0775 --group ps-ioc --directory $(IOC_INSTANCE_PATH)/autosave
 
-summary:
+summary: _check_versions
 	@echo "Generating a summary for the project. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
 	pytmc summary -a "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-code:
+code: _check_versions
 	@echo "Generating a summary of the code. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
 	pytmc summary --plcs --code "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-outline:
+outline: _check_versions
 	@echo "Generating a project outline. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
 	pytmc summary --outline "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-debug:
+debug: _check_versions
 	@echo "Running the debug GUI. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
 	pytmc debug "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-types:
+types: _check_versions
 	@echo "Running the data type debug GUI. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
 	pytmc types "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-.PHONY: all st.cmd db envPaths install build clean paths summary code outline debug types
+.PHONY: all _check_versions st.cmd db envPaths install build clean paths summary code outline debug types
