@@ -90,9 +90,9 @@ install:
 		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
 	fi 
 
-	@if test -n `shopt -s nullglob; echo "$(BUILD_PATH)"/*.db`; then \
+	@if test -n "`shopt -s nullglob; echo "$(BUILD_PATH)"/*.db`"; then \
 		echo "* Found database files to install; creating load_plc_databases.cmd..."; \
-		find $(BUILD_PATH) -name '*.db' -print0 | \
+		find "$(BUILD_PATH)" -name '*.db' -print0 | \
 			PREFIX=$(PREFIX) DELIM=":" DB_PARAMETERS=$(DB_PARAMETERS) \
 			python $(TEMPLATE_PATH)/dbloads.py \
 			> "$(BUILD_PATH)/load_plc_databases.cmd"; \
