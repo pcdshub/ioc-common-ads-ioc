@@ -28,7 +28,8 @@ record(motor,"$(PREFIX)$(MOTOR_NAME)")
 	field(NTM,"0")
 	field(TWV,"$(TWV=1)")
     info(autosaveFields_pass0, "VAL DVAL")
-    info(autosaveFields, "DIR DESC VELO VBAS VMAX ACCL PREC EGU")
+    info(autosaveFields, "DIR DESC VELO VBAS VMAX ACCL PREC EGU FOFF OFF")
+    info(archive, "DIR DESC VELO VBAS VMAX ACCL PREC EGU FOFF OFF")
 }
 
 # The message text
@@ -52,6 +53,7 @@ record(longout,"$(PREFIX)$(MOTOR_NAME)-DIR_") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_REC_DIRECTION")
     info(autosaveFields_pass0, "VAL")
+    info(archive, "VAL")
 }
 
 record(longin, "$(PREFIX)$(MOTOR_NAME)-Err")
@@ -107,6 +109,7 @@ record(longout,"$(PREFIX)$(MOTOR_NAME)-ErrRst") {
     field(PINI, "YES")
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))ErrRst")
     info(autosaveFields_pass0, "VAL")
+    info(archive, "VAL")
 }
 
 # Motor offset for this axis
@@ -118,6 +121,7 @@ record(ao,"$(PREFIX)$(MOTOR_NAME)-OFF_") {
     field(PREC, "$(PREC)")
     field(OUT,  "@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_REC_OFFSET")
     info(autosaveFields_pass0, "VAL")
+    info(archive, "VAL")
 }
 
 
@@ -130,6 +134,7 @@ record(ao,"$(PREFIX)$(MOTOR_NAME)-MRES_") {
     field(PREC, "$(PREC)")
     field(OUT,  "@asyn($(MOTOR_PORT),$(AXIS_NO))MOTOR_REC_RESOLUTION")
     info(autosaveFields_pass0, "VAL")
+    info(archive, "VAL")
 }
 
 record(ai,"$(PREFIX)$(MOTOR_NAME)-CfgSREV-RB") {

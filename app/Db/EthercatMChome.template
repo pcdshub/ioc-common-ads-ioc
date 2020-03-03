@@ -6,6 +6,7 @@ record(longout,"$(PREFIX)$(MOTOR_NAME)-HomProc") {
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))HomProc")
     info(asyn:READBACK,"1")
     info(autosaveFields_pass0, "VAL")
+    info(archive, "VAL")
 }
 
 record(ao,"$(PREFIX)$(MOTOR_NAME)-HomPos") {
@@ -16,6 +17,7 @@ record(ao,"$(PREFIX)$(MOTOR_NAME)-HomPos") {
     field(OUT,"@asyn($(MOTOR_PORT),$(AXIS_NO))HomPos")
     info(asyn:READBACK,"1")
     info(autosaveFields_pass0, "VAL")
+    info(archive, "VAL")
 }
 
 record(ao,"$(PREFIX)$(MOTOR_NAME)-VelToHom") {
