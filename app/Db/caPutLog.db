@@ -1,0 +1,4 @@
+record(waveform, "$(IOC):caPutLog:Last") {
+    field(NELM, "1000")
+    field(FTVL, "STRING")
+}
