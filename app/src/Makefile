@@ -21,6 +21,11 @@ adsIoc_DBD += asyn.dbd
 adsIoc_DBD += drvAsynIPPort.dbd
 adsIoc_DBD += dbArchive.dbd
 
+ifneq (,$(findstring /,$(CAPUTLOG)))
+  adsIoc_DBD += caPutLog.dbd
+  adsIoc_LIBS += caPutLog
+endif
+
 ifneq (,$(findstring /,$(CALC)))
   adsIoc_DBD += calcSupport.dbd
   adsIoc_LIBS += calc
