@@ -29,8 +29,8 @@ record(motor,"$(PREFIX)$(MOTOR_NAME)")
     field(VBAS,"$(VBAS=0)")
     field(VELO,"$(VELO=0)")
     info(autosaveFields_pass0, "VAL DVAL")
-    info(autosaveFields, "DIR DESC VELO VBAS VMAX ACCL PREC EGU FOFF OFF")
-    info(archive, "DIR DESC VELO VBAS VMAX ACCL PREC EGU FOFF OFF RBV VAL SPDB")
+    info(autosaveFields, "ACCL DESC DIR EGU FOFF OFF PREC VBAS VELO VMAX")
+    info(archive, "ACCL DESC DIR DVAL EGU FOFF OFF PREC RBV RRBV RVAL SPDB VAL VBAS VELO VMAX")
 }
 
 # The message text
