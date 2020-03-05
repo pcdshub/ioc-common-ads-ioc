@@ -19,6 +19,7 @@ adsIoc_DBD += asSupport.dbd
 adsIoc_DBD += ads.dbd
 adsIoc_DBD += asyn.dbd
 adsIoc_DBD += drvAsynIPPort.dbd
+adsIoc_DBD += dbArchive.dbd
 
 ifneq (,$(findstring /,$(CALC)))
   adsIoc_DBD += calcSupport.dbd
@@ -42,6 +43,7 @@ endif
 
 # adsIoc_registerRecordDeviceDriver.cpp will be created from adsIoc.dbd
 adsIoc_SRCS += adsIoc_registerRecordDeviceDriver.cpp
+adsIoc_SRCS += infoFieldArchive.c
 adsIoc_SRCS_DEFAULT += adsIocMain.cpp
 
 adsIoc_LIBS += devIocStats
