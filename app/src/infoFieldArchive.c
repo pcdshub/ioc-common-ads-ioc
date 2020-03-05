@@ -1,4 +1,4 @@
-// Lifted from autosave, repurposed to create PCDS-compliant .archive files
+// Creates PCDS-compliant .archive files from `info` node tags
 
 #define VERSION "0.0"
 
