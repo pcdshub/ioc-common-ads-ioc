@@ -11,4 +11,8 @@ PLC := {{ plc_name }}
 PYTMC_OPTS := 
 PREFIX := PLC:$(PLC)
 
+# With two $$, as in $$(IOCNAME) below, this will be expanded in the
+# environment of st.cmd:
+DB_PARAMETERS := 'PREFIX=$(PREFIX):,IOCNAME=$$(IOCNAME)'
+
 include $(IOC_TOP)/iocBoot/templates/Makefile.base
