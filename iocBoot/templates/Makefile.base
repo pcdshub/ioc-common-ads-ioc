@@ -14,6 +14,7 @@ PYTMC_OPTS ?=
 PREFIX ?=
 HOST_ARCH ?= rhel7-x86_64
 BINARY_PATH ?= $(IOC_TOP)/bin/$(HOST_ARCH)/adsIoc
+DBD_PATH ?= $(IOC_TOP)/dbd/adsIoc.dbd
 PROJECT_PATH ?= $(IOC_INSTANCE_PATH)/../../$(PROJECT_NAME)/$(PROJECT_NAME).tsproj
 TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
@@ -41,6 +42,8 @@ help:
 	@echo "    build:    builds the st.cmd, databases, envPaths, etc."
 	@echo "    clean:    cleans temporary pytmc files in $(BUILD_PATH)"
 	@echo "    paths:    make relevant directories (autosave, etc.)"
+	@echo "    lint:     lint the pragmas"
+	@echo "    lintdb:   lint the generated .db file against the IOC dbd"
 	@echo "    summary:  tool shortcut - display a PLC project summary"
 	@echo "    code:     tool shortcut - display a PLC code summary"
 	@echo "    outline:  tool shortcut - display an outline of tsproj, tmc, etc."
@@ -173,6 +176,20 @@ paths:
 	@echo "Creating autosave files directory"
 	install --mode 0775 --group ps-ioc --directory $(IOC_INSTANCE_PATH)/autosave
 
+
+lint: _check_versions
+	@echo "Linting the pytmc pragmas. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc pragmalint "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
+
+
+lintdb: _check_versions
+	@echo "Linting the database file against the IOC dbd. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
+	pytmc db \
+		--plc "$(PLC)" \
+		--dbd "$(DBD_PATH)" \
+		"$(call pyabspath,$(PROJECT_PATH))" > /dev/null
+
+
 summary: _check_versions
 	@echo "Generating a summary for the project. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
 	pytmc summary -a "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
@@ -198,4 +215,4 @@ types: _check_versions
 	pytmc types "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-.PHONY: all _check_versions st.cmd db envPaths install build clean paths summary code outline debug types
+.PHONY: all _check_versions st.cmd db envPaths install build clean paths lint lintdb summary code outline debug types
