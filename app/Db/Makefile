@@ -25,12 +25,12 @@ DB += EthercatMCreadback.template
 DB += EthercatMCslitAvoidCollSoftlimits.template
 DB += EthercatMCslit_hard.template
 DB += EthercatMCslit_soft.template
+DB += caPutLog.db
 
 DB_INSTALLS += $(IOCADMIN)/db/iocSoft.db
 DB_INSTALLS += $(IOCADMIN)/db/devIocInfo.db
 DB_INSTALLS += $(AUTOSAVE)/db/save_restoreStatus.db
 DB_INSTALLS += $(ASYN)/db/asynRecord.db
-DB_INSTALLS += caPutLog.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
