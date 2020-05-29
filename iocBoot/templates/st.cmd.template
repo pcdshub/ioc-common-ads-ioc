@@ -20,7 +20,7 @@ epicsEnvSet("ACF_FILE", "$(ADS_IOC_TOP)/iocBoot/templates/unrestricted.acf")
 # epicsEnvSet(EPICS_IOC_LOG_PORT, 54319)
 
 epicsEnvSet(CAPUTLOG_HOST, "ctl-logsrv01.pcdsn")
-epicsEnvSet(CAPUTLOG_PORT, 54318)
+epicsEnvSet(CAPUTLOG_PORT, "7011")
 
 # Register all support components
 dbLoadDatabase("$(ADS_IOC_TOP)/dbd/adsIoc.dbd")
