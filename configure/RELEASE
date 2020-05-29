@@ -12,7 +12,7 @@ ASYN_MODULE_VERSION       = R4.35-0.0.1
 MOTOR_MODULE_VERSION      = R6.9-ess-0.0.1
 ETHERCATMC_MODULE_VERSION = R2.1.0-0.1.2
 ADS_MODULE_VERSION        = R2.0.0-0.0.6
-CAPUTLOG_MODULE_VERSION   = R3.5-1.0.0
+CAPUTLOG_MODULE_VERSION   = R3.7-1.0.0
 
 # ============================================================
 # External Support module path definitions
