@@ -8,6 +8,7 @@ epicsEnvSet("ADS_IOC_TOP", "$(TOP)" )
 epicsEnvSet("ENGINEER", "{{user}}" )
 epicsEnvSet("LOCATION", "{{prefix}}" )
 epicsEnvSet("IOCSH_PS1", "$(IOC)> " )
+epicsEnvSet("ACF_FILE", "$(ADS_IOC_TOP)/iocBoot/templates/unrestricted.acf")
 
 # Run common startup commands for linux soft IOC's
 < /reg/d/iocCommon/All/pre_linux.cmd
@@ -148,6 +149,9 @@ cd "$(IOC_TOP)"
 
 # Create the archiver file
 makeArchiveFromDbInfo("$(IOC_DATA)/$(IOC)/archive/$(IOC).archive", "archive")
+
+# Configure access security: this is required for caPutLog.
+asSetFilename("$(ACF_FILE)")
 
 # Initialize the IOC and start processing records
 iocInit()
