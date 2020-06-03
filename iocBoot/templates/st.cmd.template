@@ -17,7 +17,7 @@ epicsEnvSet("ACF_FILE", "$(ADS_IOC_TOP)/iocBoot/templates/unrestricted.acf")
 
 # Log messages go to psloghost.pcdsn currently:
 # epicsEnvSet(EPICS_IOC_LOG_INET, "ctl-logsrv01.pcdsn")
-# epicsEnvSet(EPICS_IOC_LOG_PORT, 54319)
+# epicsEnvSet(EPICS_IOC_LOG_PORT, "7004")
 
 epicsEnvSet(CAPUTLOG_HOST, "ctl-logsrv01.pcdsn")
 epicsEnvSet(CAPUTLOG_PORT, "7011")
@@ -155,6 +155,13 @@ asSetFilename("$(ACF_FILE)")
 
 # Initialize the IOC and start processing records
 iocInit()
+
+# Configure errlog to go to logstash
+#  - This prefix is *required* for logstash to know which IOC is sending the
+#    message.
+#  - This *cannot* be modified without changes to the logstash configuration.
+iocLogPrefix("IOC=${IOCNAME} ")
+iocLogInit()
 
 # Configure and start the caPutLogger after iocInit
 epicsEnvSet(EPICS_AS_PUT_LOG_PV, "${IOC}:caPutLog:Latest")
