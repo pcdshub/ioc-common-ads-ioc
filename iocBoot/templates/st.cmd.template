@@ -119,7 +119,7 @@ dbLoadRecords("EthercatMCdebug.template", "PREFIX=$(MOTOR_PREFIX), MOTOR_NAME=$(
 
 dbLoadRecords("iocSoft.db", "IOC={{prefix}}")
 dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{delim}}")
-dbLoadRecords("caPutLog.db", "IOC=${IOC}:")
+dbLoadRecords("caPutLog.db", "IOC=${IOCNAME}")
 
 cd "$(IOC_TOP)"
 
@@ -164,7 +164,7 @@ iocLogPrefix("IOC=${IOCNAME} ")
 iocLogInit()
 
 # Configure and start the caPutLogger after iocInit
-epicsEnvSet(EPICS_AS_PUT_LOG_PV, "${IOC}:caPutLog:Latest")
+epicsEnvSet(EPICS_AS_PUT_LOG_PV, "${IOCNAME}:caPutLog:Last")
 
 # caPutLogInit("HOST:PORT", config)
 # config options:
