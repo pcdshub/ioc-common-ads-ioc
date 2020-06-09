@@ -16,8 +16,8 @@ epicsEnvSet("ACF_FILE", "$(ADS_IOC_TOP)/iocBoot/templates/unrestricted.acf")
 # In the future, caPutLog settings should be in `pre_linux.cmd`:
 
 # Log messages go to psloghost.pcdsn currently:
-# epicsEnvSet(EPICS_IOC_LOG_INET, "ctl-logsrv01.pcdsn")
-# epicsEnvSet(EPICS_IOC_LOG_PORT, "7004")
+epicsEnvSet(EPICS_IOC_LOG_INET, "ctl-logsrv01.pcdsn")
+epicsEnvSet(EPICS_IOC_LOG_PORT, "7004")
 
 epicsEnvSet(CAPUTLOG_HOST, "ctl-logsrv01.pcdsn")
 epicsEnvSet(CAPUTLOG_PORT, "7011")
