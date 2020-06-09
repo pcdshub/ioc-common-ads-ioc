@@ -34,7 +34,7 @@ DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOCNAME)'
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
 
-all: build clean
+all: build paths clean
 
 help:
 	@echo "Available commands:"

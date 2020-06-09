@@ -18,13 +18,13 @@ include $(TOP)/configure/CONFIG
 ARCHIVE +=
 REQ +=
 
-DB_INSTALLS += EthercatMC.template
-DB_INSTALLS += EthercatMCdebug.template
-DB_INSTALLS += EthercatMChome.template
-DB_INSTALLS += EthercatMCreadback.template
-DB_INSTALLS += EthercatMCslitAvoidCollSoftlimits.template
-DB_INSTALLS += EthercatMCslit_hard.template
-DB_INSTALLS += EthercatMCslit_soft.template
+DB += EthercatMC.template
+DB += EthercatMCdebug.template
+DB += EthercatMChome.template
+DB += EthercatMCreadback.template
+DB += EthercatMCslitAvoidCollSoftlimits.template
+DB += EthercatMCslit_hard.template
+DB += EthercatMCslit_soft.template
 
 DB_INSTALLS += $(IOCADMIN)/db/iocSoft.db
 DB_INSTALLS += $(IOCADMIN)/db/devIocInfo.db
