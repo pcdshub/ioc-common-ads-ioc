@@ -1,11 +1,3 @@
-record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgVELO-RB_")
-{
-    field(PREC, "$(PREC)")
-    field(DOL,  "$(PREFIX)$(MOTOR_NAME)-CfgVELO-RB CP")
-    field(OUT,  "$(PREFIX)$(MOTOR_NAME).VELO")
-    field(OMSL, "closed_loop")
-}
-
 record(ao, "$(PREFIX)$(MOTOR_NAME)-CfgVMAX-RB_")
 {
     field(PREC, "$(PREC)")
