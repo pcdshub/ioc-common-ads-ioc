@@ -13,6 +13,6 @@ PREFIX := PLC:$(PLC)
 
 # With two $$, as in $$(IOCNAME) below, this will be expanded in the
 # environment of st.cmd:
-DB_PARAMETERS := 'PREFIX=$(PREFIX):,IOCNAME=$$(IOCNAME)'
+DB_PARAMETERS := 'PREFIX=$(PREFIX):,IOCNAME=$$(IOC),IOC=$$(IOC)'
 
 include $(IOC_TOP)/iocBoot/templates/Makefile.base
