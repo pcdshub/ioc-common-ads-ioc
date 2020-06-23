@@ -5,10 +5,9 @@
 
 epicsEnvSet("ADS_IOC_TOP", "$(TOP)" )
 
-epicsEnvSet("IOCNAME", "{{name}}" )
 epicsEnvSet("ENGINEER", "{{user}}" )
 epicsEnvSet("LOCATION", "{{prefix}}" )
-epicsEnvSet("IOCSH_PS1", "$(IOCNAME)> " )
+epicsEnvSet("IOCSH_PS1", "$(IOC)> " )
 
 # Run common startup commands for linux soft IOC's
 < /reg/d/iocCommon/All/pre_linux.cmd
@@ -118,7 +117,7 @@ cd "$(IOC_TOP)"
 
 {% if additional_db_files %}
 {% for db in additional_db_files %}
-dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{delim}},IOCNAME=$(IOCNAME),{{ db.macros }}")
+dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{delim}},IOCNAME=$(IOC),{{ db.macros }}")
 
 {% endfor %}
 {% endif %}
