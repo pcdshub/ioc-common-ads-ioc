@@ -11,7 +11,7 @@ PLC := {{ plc_name }}
 PYTMC_OPTS := 
 PREFIX := PLC:$(PLC)
 
-# With two $$, as in $$(IOCNAME) below, this will be expanded in the
+# With two $$, as in $$(IOC) below, this will be expanded in the
 # environment of st.cmd:
 DB_PARAMETERS := 'PREFIX=$(PREFIX):,IOCNAME=$$(IOC),IOC=$$(IOC)'
 
