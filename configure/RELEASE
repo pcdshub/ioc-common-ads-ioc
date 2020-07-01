@@ -12,6 +12,7 @@ ASYN_MODULE_VERSION       = R4.35-0.0.1
 MOTOR_MODULE_VERSION      = R6.9-ess-0.0.1
 ETHERCATMC_MODULE_VERSION = R2.1.0-0.1.2
 ADS_MODULE_VERSION        = R2.0.0-0.0.6
+CAPUTLOG_MODULE_VERSION   = R3.7-1.0.0
 
 # ============================================================
 # External Support module path definitions
@@ -32,6 +33,7 @@ ETHERCATMC=$(EPICS_MODULES)/ethercatmc/$(ETHERCATMC_MODULE_VERSION)
 MOTOR=$(EPICS_MODULES)/motor/$(MOTOR_MODULE_VERSION)
 ASYN=$(EPICS_MODULES)/asyn/$(ASYN_MODULE_VERSION)
 ADS=$(EPICS_MODULES)/twincat-ads/$(ADS_MODULE_VERSION)
+CAPUTLOG=$(EPICS_MODULES)/caPutLog/$(CAPUTLOG_MODULE_VERSION)
 
 #MCB_MODULES=/reg/neh/home4/mcbrowne/git/modules
 
@@ -68,4 +70,8 @@ endif
 
 ifeq ($(wildcard $(ADS)/lib/$(T_A)),)
 $(error Invalid ADS: $(ADS)/lib/$(T_A))
+endif
+
+ifeq ($(wildcard $(CAPUTLOG)/lib/$(T_A)),)
+$(error Invalid CAPUTLOG: $(CAPUTLOG)/lib/$(T_A))
 endif
