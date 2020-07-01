@@ -110,7 +110,7 @@ dbLoadRecords("EthercatMCdebug.template", "PREFIX=$(MOTOR_PREFIX), MOTOR_NAME=$(
 
 dbLoadRecords("iocSoft.db", "IOC={{prefix}}")
 dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{delim}}")
-dbLoadRecords("caPutLog.db", "IOC=${IOCNAME}")
+dbLoadRecords("caPutLog.db", "IOC=${IOC}")
 
 cd "$(IOC_TOP)"
 
@@ -151,7 +151,7 @@ iocInit()
 iocLogInit()
 
 # Configure and start the caPutLogger after iocInit
-epicsEnvSet(EPICS_AS_PUT_LOG_PV, "${IOCNAME}:caPutLog:Last")
+epicsEnvSet(EPICS_AS_PUT_LOG_PV, "${IOC}:caPutLog:Last")
 
 # caPutLogInit("HOST:PORT", config)
 # config options:
@@ -159,7 +159,7 @@ epicsEnvSet(EPICS_AS_PUT_LOG_PV, "${IOCNAME}:caPutLog:Last")
 #       caPutLogOnChange    0: log only on value change
 #       caPutLogAll         1: log all puts
 #       caPutLogAllNoFilter 2: log all puts no filtering on same PV
-caPutLogInit("${CAPUTLOG_HOST}:${CAPUTLOG_PORT}", 0)
+caPutLogInit("${EPICS_CAPUTLOG_HOST}:${EPICS_CAPUTLOG_PORT}", 0)
 
 # Start autosave backups
 create_monitor_set( "info_positions.req", 10, "" )
