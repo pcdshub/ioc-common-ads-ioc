@@ -112,6 +112,9 @@ dbLoadRecords("iocSoft.db", "IOC={{prefix}}")
 dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{delim}}")
 dbLoadRecords("caPutLog.db", "IOC=${IOC}")
 
+## TwinCat System Databse files ##
+dbLoadRecords("TwinCAT_TaskInfo.db", "PORT={{ asyn_port }}, PREFIX={{prefix}}")
+
 cd "$(IOC_TOP)"
 
 ## Database files ##
