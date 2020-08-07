@@ -26,6 +26,7 @@ DB += EthercatMCslitAvoidCollSoftlimits.template
 DB += EthercatMCslit_hard.template
 DB += EthercatMCslit_soft.template
 DB += caPutLog.db
+DB += TwinCAT_TaskInfo.db
 
 DB_INSTALLS += $(IOCADMIN)/db/iocSoft.db
 DB_INSTALLS += $(IOCADMIN)/db/devIocInfo.db
