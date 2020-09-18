@@ -114,6 +114,7 @@ dbLoadRecords("caPutLog.db", "IOC=${IOC}")
 
 ## TwinCat System Databse files ##
 dbLoadRecords("TwinCAT_TaskInfo.db", "PORT={{ asyn_port }}, PREFIX={{prefix}}")
+dbLoadRecords("TwinCAT_AppInfo.db", "PORT={{ asyn_port }}, PREFIX={{prefix}}")
 
 cd "$(IOC_TOP)"
 
