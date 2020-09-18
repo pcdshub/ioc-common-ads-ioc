@@ -2,6 +2,10 @@
  Release History
 =================
 
+R0.3.1 (2020-09-18)
+===================
+- Fix invalid fields from the appinfo database  (`#63 <https://github.com/pcdshub/ads-ioc/pull/63>`__)
+
 
 R0.3.0 (2020-09-18)
 ===================
