@@ -1,0 +1,122 @@
+record(longin,"$(PREFIX):AppInfo:TaskCnt"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.TaskCnt?")
+ field(SCAN,"I/O Intr")
+ info(archive, "monitor 1: VAL")
+}
+
+record(longin,"$(PREFIX):AppInfo:OnlineChangeCnt"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.OnlineChangeCnt?")
+ field(SCAN,"I/O Intr")
+ info(archive, "monitor 1: VAL")
+}
+
+record(longin,"$(PREFIX):AppInfo:Flags"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.Flags?")
+ field(SCAN,"I/O Intr")
+ info(archive, "monitor 1: VAL")
+}
+
+record(longin,"$(PREFIX):AppInfo:AdsPort"){
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.AdsPort?")
+ field(SCAN,"I/O Intr")
+ info(archive, "monitor 1: VAL")
+}
+
+record(bi,"$(PREFIX)AppInfo:BootDataLoaded"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.BootDataLoaded?")
+ field(SCAN,"I/O Intr")
+ field(ZNAME,"FALSE")
+ field(ONAM,"TRUE")
+ info(archive, "monitor 1: VAL")
+}
+
+record(bi,"$(PREFIX):AppInfo:OldBootData"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.OldBootData?")
+ field(SCAN,"I/O Intr")
+ field(ZNAME,"FALSE")
+ field(ONAM,"TRUE")
+ info(archive, "monitor 1: VAL")
+}
+
+record(bi,"$(PREFIX):AppInfo:KeepOutputsOnBP"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.KeepOutputsOnBP?")
+  field(ZNAME,"FALSE")
+ field(ONAM,"TRUE")
+ field(SCAN,"I/O Intr")
+ info(archive, "monitor 1: VAL")
+}
+
+record(bi,"$(PREFIX):AppInfo:ShutdownInProgress"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.ShutdownInProgress?")
+ field(ZNAME,"FALSE")
+ field(ONAM,"TRUE")
+ field(SCAN,"I/O Intr")
+ info(archive, "monitor 1: VAL")
+}
+
+record(bi,"$(PREFIX):AppInfo:LicensesPending"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.LicensesPending?")
+ field(ZNAME,"FALSE")
+ field(ONAM,"TRUE")
+ field(SCAN,"I/O Intr")
+ info(archive, "monitor 1: VAL")
+}
+
+record(bi,"$(PREFIX):AppInfo:BSODOccured"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt32")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.BSODOccured?")
+  field(ZNAME,"FALSE")
+ field(ONAM,"TRUE")
+ field(SCAN,"I/O Intr")
+ info(archive, "monitor 1: VAL")
+}
+
+
+record(waveform,"$(PREFIX):AppInfo:AppName"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt8ArrayIn")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.AppName?")
+  field(NELM,63)
+  field(SCAN,"I/O Intr")
+  field(FTVL,"CHAR")
+ info(archive, "monitor 1: VAL")
+}
+
+record(waveform,"$(PREFIX):AppInfo:ProjectName"){
+ field(PINI, "1")
+ field(TSE, -2)
+ field(DTYP, "asynInt8ArrayIn")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/TwinCAT_SystemInfoVarList._AppInfo.ProjectName?")
+  field(NELM,63)
+  field(SCAN,"I/O Intr")
+  field(FTVL,"CHAR")
+ info(archive, "monitor 1: VAL")
+}
