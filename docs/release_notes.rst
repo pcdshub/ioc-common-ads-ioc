@@ -6,9 +6,10 @@
 R0.3.0 (2020-09-18)
 ===================
 
-- Adds caPutLog and error logging support (`#37 <https://github.com/pcdshub/ads-ioc/issues/37>`__)
-- Adds task information database (`#60 <https://github.com/pcdshub/ads-ioc/issues/60>`__)
-- Fixes some macro-related issues.
+- Add caPutLog and error logging support (`#37 <https://github.com/pcdshub/ads-ioc/issues/37>`__)
+- Add task information database (`#60 <https://github.com/pcdshub/ads-ioc/pull/60>`__)
+- Add appinfo database (`#62 <https://github.com/pcdshub/ads-ioc/pull/62>`__)
+- Fix some macro-related issues.
 
 
 R0.2.5 (2020-06-17)
