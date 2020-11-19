@@ -1,6 +1,6 @@
 ifndef IOC_TOP
 $(error IOC_TOP is not set)
-endif 
+endif
 ifndef PROJECT_NAME
 $(error PROJECT_NAME is not set)
 endif
@@ -20,7 +20,7 @@ TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
 IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
 PRODUCTION_IOC ?= 0
-PYTMC_MIN_VERSION ?= 2.6.0
+PYTMC_MIN_VERSION ?= 2.7.7
 
 ifeq ($(PRODUCTION_IOC), 1)
 	IOC_DATA_PATH ?= /reg/d/iocData
@@ -95,7 +95,7 @@ install:
 	@ if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
 		echo "* Changing permissions on the old st.cmd..."; \
 		chmod +w "$(IOC_INSTANCE_PATH)/st.cmd"; \
-	fi 
+	fi
 
 	@if test -n "`shopt -s nullglob; echo "$(BUILD_PATH)"/*.db`"; then \
 		echo "* Found database files to install; creating load_plc_databases.cmd..."; \
