@@ -146,6 +146,7 @@ build:
 	@echo "IOC name: $(IOC_NAME)"
 	@echo "PYTMC_OPTS: $(PYTMC_OPTS)"
 	@echo "PROJECT_PATH: $(PROJECT_PATH)"
+	@echo "ARCHIVE_PATH: $(ARCHIVE_PATH)"
 	@echo "Absolute project path: " $(call pyabspath,$(PROJECT_PATH))
 	@echo "-----------------------------------------------------------"
 	@echo ""
