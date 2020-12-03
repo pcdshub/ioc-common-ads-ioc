@@ -2,6 +2,15 @@
  Release History
 =================
 
+R0.4.0 (2020-12-03)
+===================
+
+- Fix for callback queue-related errors at IOC boot
+- Add limits and resolution to autosave
+- Archive limits
+- New minimum pytmc version: 2.7.7
+- Add PYTMC_DB_OPTS variable
+
 R0.3.1 (2020-09-18)
 ===================
 - Fix invalid fields from the appinfo database  (`#63 <https://github.com/pcdshub/ads-ioc/pull/63>`__)
