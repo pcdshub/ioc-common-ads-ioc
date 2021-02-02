@@ -2,6 +2,12 @@
  Release History
 =================
 
+R0.4.1 (2021-02-02)
+===================
+
+- Add DHLM, DLLM, and RDBD fields to autosave for motor support.
+
+
 R0.4.0 (2020-12-03)
 ===================
 
@@ -10,6 +16,7 @@ R0.4.0 (2020-12-03)
 - Archive limits
 - New minimum pytmc version: 2.7.7
 - Add PYTMC_DB_OPTS variable
+
 
 R0.3.1 (2020-09-18)
 ===================
