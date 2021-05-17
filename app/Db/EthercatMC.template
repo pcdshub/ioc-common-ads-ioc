@@ -28,7 +28,7 @@ record(motor,"$(PREFIX)$(MOTOR_NAME)")
     field(TWV,"$(TWV=1)")
     field(VBAS,"$(VBAS=0)")
     field(VELO,"$(VELO=0)")
-    info(autosaveFields_pass0, "VAL DVAL")
+    info(autosaveFields_pass0, "VAL DVAL DIR OFF")
     info(autosaveFields, "ACCL DESC DHLM DIR DLLM EGU ERES FOFF HLM LLM MRES OFF PREC RDBD VBAS VELO VMAX")
     info(archive, "ACCL DESC DHLM DIR DLLM DVAL EGU FOFF HLM LLM OFF PREC RDBD RBV RRBV RVAL SPDB VAL VBAS VELO VMAX")
 }
