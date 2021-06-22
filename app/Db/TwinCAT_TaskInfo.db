@@ -1,4 +1,3 @@
-
 record(longin,"$(PREFIX):TaskInfo:1:CycleTime"){
  field(PINI, "1")
  field(TSE, -2)
@@ -83,6 +82,15 @@ record(bi,"$(PREFIX):TaskInfo:1:CycleTimeExceeded"){
  field(ZNAM,"FALSE")
  field(ONAM,"TRUE")
 info(archive, "monitor 1: VAL")
+}
+
+record(longin, "$(PREFIX):TaskInfo:1:ExceedCount_RBV"){
+ field(DTYP, "asynInt32")
+ field(INP, "@asyn($(PORT),0,1)ADSPORT=$(TASK1_PORT=350)/TS_MS=1000/.ADR.16#F200,16#100,4,19?")
+ field(PINI, "1")
+ field(SCAN, "I/O Intr")
+ field(TSE, "-2")
+ info(archive, "monitor 1: VAL")
 }
 
 record(bi,"$(PREFIX):TaskInfo:1:InCallAfterOutputUpdate"){
@@ -194,6 +202,15 @@ record(bi,"$(PREFIX):TaskInfo:2:CycleTimeExceeded"){
 info(archive, "monitor 1: VAL")
 }
 
+record(longin, "$(PREFIX):TaskInfo:2:ExceedCount_RBV"){
+ field(DTYP, "asynInt32")
+ field(INP, "@asyn($(PORT),0,1)ADSPORT=$(TASK2_PORT=351)/TS_MS=1000/.ADR.16#F200,16#100,4,19?")
+ field(PINI, "1")
+ field(SCAN, "I/O Intr")
+ field(TSE, "-2")
+ info(archive, "monitor 1: VAL")
+}
+
 record(bi,"$(PREFIX):TaskInfo:2:InCallAfterOutputUpdate"){
  field(PINI, "1")
  field(TSE, -2)
@@ -302,6 +319,15 @@ record(bi,"$(PREFIX):TaskInfo:3:CycleTimeExceeded"){
 info(archive, "monitor 1: VAL")
 }
 
+record(longin, "$(PREFIX):TaskInfo:3:ExceedCount_RBV"){
+ field(DTYP, "asynInt32")
+ field(INP, "@asyn($(PORT),0,1)ADSPORT=$(TASK3_PORT=352)/TS_MS=1000/.ADR.16#F200,16#100,4,19?")
+ field(PINI, "1")
+ field(SCAN, "I/O Intr")
+ field(TSE, "-2")
+ info(archive, "monitor 1: VAL")
+}
+
 record(bi,"$(PREFIX):TaskInfo:3:InCallAfterOutputUpdate"){
  field(PINI, "1")
  field(TSE, -2)
@@ -323,4 +349,3 @@ record(bi,"$(PREFIX):TaskInfo:3:RTViolation"){
  field(ONAM,"TRUE")
 info(archive, "monitor 1: VAL")
 }
-
