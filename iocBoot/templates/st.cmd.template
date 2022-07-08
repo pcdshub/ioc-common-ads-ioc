@@ -1,8 +1,9 @@
 #!{{hashbang}}
 ################### AUTO-GENERATED DO NOT EDIT ###################
 {% set project, plc = get_plc_by_name(projects, plc) -%}
-#    Project name: {{ project.name }} ({{ plc.link_name }})
-#        PLC name: {{ plc.name }}
+#
+#         Project: {{ project.filename.name }}
+#        PLC name: {{ plc.name }} ({{ plc.link_name }})
 # Generated using: pytmc {{ pytmc_version}}
 # Project version: {{ project.git_info.describe }}
 #    Project hash: {{ project.git_info.sha }}
