@@ -38,7 +38,7 @@ PLC_HOSTNAME ?=
 IGNORE_LINTER_ERRORS ?= 0
 
 ifeq ($(PRODUCTION_IOC), 1)
-	IOC_DATA_PATH ?= /reg/d/iocData
+	IOC_DATA_PATH ?= /cds/data/iocData
 else
 	IOC_DATA_PATH ?= $(HOME)/iocData
 endif
