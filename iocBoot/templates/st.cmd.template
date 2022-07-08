@@ -1,5 +1,22 @@
 #!{{hashbang}}
-###### AUTO-GENERATED DO NOT EDIT ##############
+################### AUTO-GENERATED DO NOT EDIT ###################
+{% set project, plc = get_plc_by_name(projects, plc) -%}
+#    Project name: {{ project.name }} ({{ plc.link_name }})
+#        PLC name: {{ plc.name }}
+# Generated using: pytmc {{ pytmc_version}}
+# Project version: {{ project.git_info.describe }}
+#    Project hash: {{ project.git_info.sha }}
+#
+# Libraries:
+{% for library, info in get_library_versions(plc) | dictsort %}
+{% if "PlaceholderReference" in info and "PlaceholderResolution" in info %}
+#   {{ library }}: {{ info.PlaceholderReference.version }} -> {{ info.PlaceholderResolution.version }} ({{ info.PlaceholderResolution.vendor }})
+{% elif "PlaceholderReference" in info %}
+#   {{ library }}: {{ info.PlaceholderReference.version }} ({{ info.PlaceholderReference.vendor }})
+{% endif %}
+{% endfor %}
+#
+################### AUTO-GENERATED DO NOT EDIT ###################
 
 < envPaths
 
@@ -17,10 +34,10 @@ epicsEnvSet("ACF_FILE", "$(ADS_IOC_TOP)/iocBoot/templates/unrestricted.acf")
 dbLoadDatabase("$(ADS_IOC_TOP)/dbd/adsIoc.dbd")
 adsIoc_registerRecordDeviceDriver(pdbbase)
 
-epicsEnvSet("ASYN_PORT",        "{{asyn_port}}")
-epicsEnvSet("IPADDR",           "{{plc_ip}}")
-epicsEnvSet("AMSID",            "{{plc_ams_id}}")
-epicsEnvSet("AMS_PORT",         "{{plc_ads_port}}")
+epicsEnvSet("ASYN_PORT",        "ASYN_PLC")
+epicsEnvSet("IPADDR",           "{{plc.target_ip}}")
+epicsEnvSet("AMSID",            "{{plc.ams_id}}")
+epicsEnvSet("AMS_PORT",         "{{plc.ads_port}}")
 epicsEnvSet("ADS_MAX_PARAMS",   "10000")
 epicsEnvSet("ADS_SAMPLE_MS",    "50")
 epicsEnvSet("ADS_MAX_DELAY_MS", "100")
@@ -54,10 +71,12 @@ adsAsynPortDriverConfigure("$(ASYN_PORT)", "$(IPADDR)", "$(AMSID)", "$(AMS_PORT)
 
 cd "$(ADS_IOC_TOP)/db"
 
+{% set motors = get_motors(plc) %}
 {% if motors %}
+{%- set nc = get_nc(project) %}
 
-epicsEnvSet("MOTOR_PORT",     "{{motor_port}}")
-epicsEnvSet("PREFIX",         "{{prefix}}{{delim}}")
+epicsEnvSet("MOTOR_PORT",     "PLC_ADS")
+epicsEnvSet("PREFIX",         "{{prefix}}{{pv_delimiter}}")
 epicsEnvSet("NUMAXES",        "{{nc.axis_by_id|max}}")
 epicsEnvSet("MOVE_POLL_RATE", "200")
 epicsEnvSet("IDLE_POLL_RATE", "1000")
@@ -109,21 +128,33 @@ dbLoadRecords("EthercatMCdebug.template", "PREFIX=$(MOTOR_PREFIX), MOTOR_NAME=$(
 {% endif %}
 
 dbLoadRecords("iocSoft.db", "IOC={{prefix}}")
-dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{delim}}")
+dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{pv_delimiter}}")
 dbLoadRecords("caPutLog.db", "IOC=${IOC}")
 
 ## TwinCat System Databse files ##
-dbLoadRecords("TwinCAT_TaskInfo.db", "PORT={{ asyn_port }}, PREFIX={{prefix}}")
-dbLoadRecords("TwinCAT_AppInfo.db", "PORT={{ asyn_port }}, PREFIX={{prefix}}")
+dbLoadRecords("TwinCAT_TaskInfo.db", "PORT=${ASYN_PORT}, PREFIX={{prefix}}")
+dbLoadRecords("TwinCAT_AppInfo.db", "PORT=${ASYN_PORT}, PREFIX={{prefix}}")
 
 cd "$(IOC_TOP)"
 
 ## Database files ##
-< "$(IOC_TOP)/load_plc_databases.cmd"
+{% if plc.tmc %}
+{% set db_filenames, records = generate_records(plc) %}
+{% for db in db_filenames %}
+dbLoadRecords("{{ db }}", "PORT={{ asyn_port }},{{ db_parameters }}")
+{% endfor %}
+{%- set num_records = records | length %}
+{%- set queue_size_base = queue_size_base | int %}
+{%- set queue_size_scale = queue_size_scale | int %}
+{%- set callback_queue_size = queue_size_base + queue_size_scale * num_records %}
+
+# Total records: {{ records | length }}
+callbackSetQueueSize({{ callback_queue_size }})
+{% endif %}
 
 {% if additional_db_files %}
 {% for db in additional_db_files %}
-dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{delim}},IOCNAME=$(IOC),{{ db.macros }}")
+dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{pv_delimiter}},IOCNAME=$(IOC),{{ db.macros }}")
 
 {% endfor %}
 {% endif %}
@@ -132,7 +163,7 @@ dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{delim}},
 set_savefile_path( "$(IOC_DATA)/$(IOC)/autosave" )
 set_requestfile_path( "$(IOC_TOP)/autosave" )
 
-save_restoreSet_status_prefix( "{{prefix}}{{delim}}" )
+save_restoreSet_status_prefix( "{{prefix}}{{pv_delimiter}}" )
 save_restoreSet_IncompleteSetsOk( 1 )
 save_restoreSet_DatedBackupFiles( 1 )
 set_pass0_restoreFile( "info_positions.sav" )
