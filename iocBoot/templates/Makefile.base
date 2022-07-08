@@ -49,14 +49,14 @@ DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOC),IOC=$$(IOC)'
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
 
-all: build paths clean
+all: build iocdata clean
 
 help:
 	@echo "Available commands:"
 	@echo "    all:      builds the IOC and cleans the temporary files"
 	@echo "    build:    builds the st.cmd, databases, envPaths, etc."
 	@echo "    clean:    cleans temporary pytmc files in $(BUILD_PATH)"
-	@echo "    paths:    make relevant directories (autosave, etc.)"
+	@echo "    iocdata:  create and/or update iocData directories (autosave, etc.)"
 	@echo "    lint:     lint the pragmas"
 	@echo "    lintdb:   lint the generated .db file against the IOC dbd"
 	@echo "    summary:  tool shortcut - display a PLC project summary"
@@ -72,7 +72,7 @@ help:
 
 
 _check_versions:
-	@python -c "import sys, pytmc, distutils.version; print('* Found pytmc v', pytmc.__version__); sys.exit(not (distutils.version.LooseVersion(pytmc.__version__) >= distutils.version.LooseVersion('$(PYTMC_MIN_VERSION)')))" || (echo "A newer pytmc is required: >= $(PYTMC_MIN_VERSION)" && exit 1)
+	@python -c "import sys, pytmc, distutils.version; print('* Found pytmc v', pytmc.__version__); sys.exit(not (distutils.version.LooseVersion(pytmc.__version__) >= distutils.version.LooseVersion('$(PYTMC_MIN_VERSION)')))" || (echo "A newer pytmc is required: >= $(PYTMC_MIN_VERSION)" 2> /dev/null && exit 1)
 
 st.cmd: _check_versions
 	@echo "Executing pytmc stcmd: creating st.cmd and database files..."
@@ -111,7 +111,7 @@ envPaths:
 	@echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
 	@echo 'epicsEnvSet("IOC_DATA", "$(IOC_DATA_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
 
-install:
+copy_build_output:
 	@echo ""
 	@echo "* Copying st.cmd and databases..."
 	@ if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
@@ -134,18 +134,10 @@ install:
 	@shopt -s nullglob; \
 	for filename in "$(BUILD_PATH)"/*.archive; \
 	do \
-		if [ -d "$(ARCHIVE_PATH)" ]; then \
-			echo "* Installing archive file: $$(basename $$filename)"; \
-			install -p -m 0444 "$$filename" "$(ARCHIVE_PATH)"; \
-		else \
-			echo "* Warning: ${ARCHIVE_PATH} does not exist;" \
-				"copying archive file to the IOC instance path."; \
-			install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
-		fi; \
+		install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
 	done
 
 	@cd "$(IOC_INSTANCE_PATH)"
-
 
 build:
 	@echo "-----------------------------------------------------------"
@@ -164,7 +156,7 @@ build:
 
 	@$(MAKE) st.cmd
 	@$(MAKE) envPaths
-	@$(MAKE) install
+	@$(MAKE) copy_build_output
 
 	@echo ""
 	@echo "Build complete."
@@ -181,12 +173,19 @@ clean:
 	@echo "Done"
 
 
-paths:
+iocdata:
 	@echo "Creating IOC data directory"
 	install --mode 0775 --group ps-ioc --directory $(IOC_DATA_PATH)/$(IOC_NAME)/{iocInfo,archive,logs,autosave}
 	@echo "Creating autosave files directory"
 	install --mode 0775 --group ps-ioc --directory $(IOC_INSTANCE_PATH)/autosave
-
+	@shopt -s nullglob; \
+	for filename in "$(IOC_INSTANCE_PATH)"/*.archive; \
+	do \
+		if [ -d "$(ARCHIVE_PATH)" ]; then \
+			echo "* Installing archive file: $$(basename $$filename)"; \
+			install -p -m 0444 "$$filename" "$(ARCHIVE_PATH)"; \
+		fi; \
+	done
 
 lint: _check_versions
 	@echo "Linting the pytmc pragmas. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
@@ -226,4 +225,4 @@ types: _check_versions
 	pytmc types "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-.PHONY: all _check_versions st.cmd db envPaths install build clean paths lint lintdb summary code outline debug types
+.PHONY: all _check_versions st.cmd db envPaths copy_build_output build clean iocdata lint lintdb summary code outline debug types
