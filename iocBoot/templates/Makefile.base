@@ -32,6 +32,8 @@ QUEUE_SIZE_BASE ?= 2000
 QUEUE_SIZE_SCALE ?= 2
 # The separator for PV names:
 PV_DELIMITER ?= ':'
+# The PLC hostname which can be used in place of the auto-detected IP address:
+PLC_HOSTNAME ?=
 
 ifeq ($(PRODUCTION_IOC), 1)
 	IOC_DATA_PATH ?= /reg/d/iocData
@@ -74,15 +76,16 @@ st.cmd: _check_versions
 	@echo "Executing pytmc stcmd: creating st.cmd and database files..."
 	cd "$(BUILD_PATH)" && \
 		pytmc template \
-		--macro ioc_name="$(IOC_NAME)" \
-		--macro user="$(USER)" \
 		--macro prefix="$(PREFIX)" \
 		--macro plc="$(PLC)" \
+		--macro ioc_name="$(IOC_NAME)" \
+		--macro user="$(USER)" \
 		--macro hashbang="$(BINARY_PATH)" \
 		--macro db_parameters=$(DB_PARAMETERS) \
 		--macro queue_size_base=$(QUEUE_SIZE_BASE) \
 		--macro queue_size_scale=$(QUEUE_SIZE_SCALE) \
 		--macro pv_delimiter=$(PV_DELIMITER) \
+		--macro plc_hostname_override='$(PLC_HOSTNAME)' \
 		--template "$(TEMPLATE_PATH)/$(STCMD_TEMPLATE)" \
 		$(PYTMC_OPTS) \
 		$(PYTMC_STCMD_OPTS) \

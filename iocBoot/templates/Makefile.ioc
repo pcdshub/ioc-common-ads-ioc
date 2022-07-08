@@ -8,8 +8,12 @@ PROJECT_NAME := {{ project_name }}
 PROJECT_PATH := {{ tsproj_path }}
 PLC := {{ plc_name }}
 
-PYTMC_OPTS := 
+PYTMC_OPTS :=
 PREFIX := PLC:$(PLC)
+
+# If you know the netconfig name of the PLC, enter it here.  If specified, this
+# will be used in place of the auto-detected IP address from the PLC project:
+PLC_HOSTNAME :=
 
 # With two $$, as in $$(IOC) below, this will be expanded in the
 # environment of st.cmd:
