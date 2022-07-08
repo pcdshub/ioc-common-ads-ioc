@@ -139,7 +139,8 @@ cd "$(IOC_TOP)"
 
 ## PLC Project Database files ##
 {% if plc.tmc %}
-{% set db_filenames, records = generate_records(plc) %}
+{% set allow_errors = ignore_linter_errors | int %}
+{% set db_filenames, records = generate_records(plc, allow_errors=allow_errors) %}
 {% for db in db_filenames %}
 dbLoadRecords("{{ db }}", "PORT={{ asyn_port }},{{ db_parameters }}")
 {% endfor %}
