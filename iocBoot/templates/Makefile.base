@@ -175,9 +175,9 @@ clean:
 
 iocdata:
 	@echo "Creating IOC data directory"
-	install --mode 0775 --group ps-ioc --directory $(IOC_DATA_PATH)/$(IOC_NAME)/{iocInfo,archive,logs,autosave}
+	install --mode 2775 --group ps-ioc --directory $(IOC_DATA_PATH)/$(IOC_NAME)/{iocInfo,archive,logs,autosave}
 	@echo "Creating autosave files directory"
-	install --mode 0775 --group ps-ioc --directory $(IOC_INSTANCE_PATH)/autosave
+	install --mode 2775 --group ps-ioc --directory $(IOC_INSTANCE_PATH)/autosave
 	@shopt -s nullglob; \
 	for filename in "$(IOC_INSTANCE_PATH)"/*.archive; \
 	do \
