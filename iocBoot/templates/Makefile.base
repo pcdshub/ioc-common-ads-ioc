@@ -36,6 +36,8 @@ PV_DELIMITER ?= ':'
 PLC_HOSTNAME ?=
 # Ignore linter errors, if possible.  This is disabled by default.
 IGNORE_LINTER_ERRORS ?= 0
+# IOC host IP regular expression
+IOC_HOST_IP_REGEX ?= "^(134|172).*$"
 
 ifeq ($(PRODUCTION_IOC), 1)
 	IOC_DATA_PATH ?= /cds/data/iocData
@@ -89,6 +91,7 @@ st.cmd: _check_versions
 		--macro pv_delimiter=$(PV_DELIMITER) \
 		--macro plc_hostname_override='$(PLC_HOSTNAME)' \
 		--macro ignore_linter_errors='$(IGNORE_LINTER_ERRORS)' \
+		--macro ioc_host_ip_regex='$(IOC_HOST_IP_REGEX)' \
 		--template "$(TEMPLATE_PATH)/$(STCMD_TEMPLATE)":"st.cmd" \
 		$(PYTMC_OPTS) \
 		$(PYTMC_STCMD_OPTS) \

@@ -1,12 +1,14 @@
 #!{{hashbang}}
 ################### AUTO-GENERATED DO NOT EDIT ###################
 {% set project, plc = get_plc_by_name(projects, plc) -%}
+{%- set plc_host = plc_hostname_override or plc.target_ip %}
 #
 #         Project: {{ project.filename.name }}
 #        PLC name: {{ plc.name }} ({{ plc.link_name }})
 # Generated using: pytmc {{ pytmc_version}}
 # Project version: {{ project.git_info.describe }}
 #    Project hash: {{ project.git_info.sha }}
+#     PLC IP/host: {{ plc.target_ip}} ({{ plc_hostname_override }})
 #
 # Libraries:
 #
@@ -38,6 +40,9 @@
 
 epicsEnvSet("ADS_IOC_TOP", "$(TOP)" )
 
+# Add a route to the PLC
+system("${ADS_IOC_TOP}/scripts/add_route.sh {{ plc_host }} {{ ioc_host_ip_regex }}")
+
 epicsEnvSet("ENGINEER", "{{user}}" )
 epicsEnvSet("LOCATION", "{{prefix}}" )
 epicsEnvSet("IOCSH_PS1", "$(IOC)> " )
@@ -51,7 +56,7 @@ dbLoadDatabase("$(ADS_IOC_TOP)/dbd/adsIoc.dbd")
 adsIoc_registerRecordDeviceDriver(pdbbase)
 
 epicsEnvSet("ASYN_PORT",        "ASYN_PLC")
-epicsEnvSet("IPADDR",           "{{plc_hostname_override or plc.target_ip}}")
+epicsEnvSet("IPADDR",           "{{plc_host}}")
 epicsEnvSet("AMSID",            "{{plc.ams_id}}")
 epicsEnvSet("AMS_PORT",         "{{plc.port}}")
 epicsEnvSet("ADS_MAX_PARAMS",   "{{ max_params }}")
