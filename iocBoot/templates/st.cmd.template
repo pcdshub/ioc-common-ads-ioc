@@ -133,7 +133,9 @@ dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{pv_delimiter}}")
 dbLoadRecords("caPutLog.db", "IOC=$(IOC)")
 
 ## TwinCAT task and application databases ##
-dbLoadRecords("TwinCAT_TaskInfo.db", "PORT=$(ASYN_PORT), PREFIX={{prefix}}")
+{% for priority, (_, task) in plc.instance.task_pous.items() %}
+dbLoadRecords("TwinCAT_TaskInfo.db", "PORT=$(ASYN_PORT),PREFIX={{prefix}},IDX={{task.array_index}}")
+{% endfor %}
 dbLoadRecords("TwinCAT_AppInfo.db", "PORT=$(ASYN_PORT), PREFIX={{prefix}}")
 
 cd "$(IOC_TOP)"

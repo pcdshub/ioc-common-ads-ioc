@@ -89,10 +89,10 @@ st.cmd: _check_versions
 		--macro pv_delimiter=$(PV_DELIMITER) \
 		--macro plc_hostname_override='$(PLC_HOSTNAME)' \
 		--macro ignore_linter_errors='$(IGNORE_LINTER_ERRORS)' \
-		--template "$(TEMPLATE_PATH)/$(STCMD_TEMPLATE)" \
+		--template "$(TEMPLATE_PATH)/$(STCMD_TEMPLATE)":"st.cmd" \
 		$(PYTMC_OPTS) \
 		$(PYTMC_STCMD_OPTS) \
-		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
+		"$(call pyabspath,$(PROJECT_PATH))"
 
 db: _check_versions
 	@echo "Executing pytmc db: creating $(PLC).db and $(PLC).archive..."
