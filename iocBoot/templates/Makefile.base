@@ -39,7 +39,7 @@ IGNORE_LINTER_ERRORS ?= 0
 # Add a PLC route automatically at startup
 ADD_PLC_ROUTE ?= 1
 # IOC host IP regular expression
-IOC_HOST_IP_REGEX ?= "^(134|172).*$"
+IOC_HOST_IP_REGEX ?= ^172.*$
 
 ifeq ($(PRODUCTION_IOC), 1)
 	IOC_DATA_PATH ?= /cds/data/iocData
