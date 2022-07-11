@@ -9,6 +9,7 @@
 #    Project hash: {{ project.git_info.sha }}
 #
 # Libraries:
+#
 {% for library, info in get_library_versions(plc) | dictsort %}
 {% if "PlaceholderReference" in info and "PlaceholderResolution" in info %}
 #   {{ library }}: {{ info.PlaceholderReference.version }} -> {{ info.PlaceholderResolution.version }} ({{ info.PlaceholderResolution.vendor }})
@@ -18,7 +19,21 @@
 {% endfor %}
 #
 ################### AUTO-GENERATED DO NOT EDIT ###################
+{%- if plc.tmc %}
 
+{%- set allow_errors = ignore_linter_errors | int %}
+{%- set db_filenames, records = generate_records(plc, allow_errors=allow_errors) %}
+{%- set num_records = records | length %}
+{%- set max_params = num_records + 1000 %}
+
+{%- else %}
+
+{%- set db_filenames = [] %}
+{%- set records = {} %}
+{%- set num_records = 0 %}
+{%- set max_params = 10000 %}
+
+{%- endif %}
 < envPaths
 
 epicsEnvSet("ADS_IOC_TOP", "$(TOP)" )
@@ -39,7 +54,7 @@ epicsEnvSet("ASYN_PORT",        "ASYN_PLC")
 epicsEnvSet("IPADDR",           "{{plc_hostname_override or plc.target_ip}}")
 epicsEnvSet("AMSID",            "{{plc.ams_id}}")
 epicsEnvSet("AMS_PORT",         "{{plc.port}}")
-epicsEnvSet("ADS_MAX_PARAMS",   "10000")
+epicsEnvSet("ADS_MAX_PARAMS",   "{{ max_params }}")
 epicsEnvSet("ADS_SAMPLE_MS",    "50")
 epicsEnvSet("ADS_MAX_DELAY_MS", "100")
 epicsEnvSet("ADS_TIMEOUT_MS",   "1000")
@@ -142,12 +157,9 @@ cd "$(IOC_TOP)"
 
 ## PLC Project Database files ##
 {% if plc.tmc %}
-{% set allow_errors = ignore_linter_errors | int %}
-{% set db_filenames, records = generate_records(plc, allow_errors=allow_errors) %}
 {% for db in db_filenames %}
 dbLoadRecords("{{ db }}", "PORT={{ asyn_port }},{{ db_parameters }}")
 {% endfor %}
-{%- set num_records = records | length %}
 {%- set queue_size_base = queue_size_base | int %}
 {%- set queue_size_scale = queue_size_scale | int %}
 {%- set callback_queue_size = queue_size_base + queue_size_scale * num_records %}
