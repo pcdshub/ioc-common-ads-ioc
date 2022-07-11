@@ -41,9 +41,11 @@
 
 epicsEnvSet("ADS_IOC_TOP", "$(TOP)" )
 
-# Add a route to the PLC
+{% if add_plc_route | int != 0 %}
+# Add a route to the PLC automatically:
 system("${ADS_IOC_TOP}/scripts/add_route.sh {{ plc_host }} {{ ioc_host_ip_regex }}")
 
+{% endif %}
 epicsEnvSet("ENGINEER", "{{user}}" )
 epicsEnvSet("LOCATION", "{{prefix}}" )
 epicsEnvSet("IOCSH_PS1", "$(IOC)> " )

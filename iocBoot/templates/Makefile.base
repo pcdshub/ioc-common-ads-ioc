@@ -36,6 +36,8 @@ PV_DELIMITER ?= ':'
 PLC_HOSTNAME ?=
 # Ignore linter errors, if possible.  This is disabled by default.
 IGNORE_LINTER_ERRORS ?= 0
+# Add a PLC route automatically at startup
+ADD_PLC_ROUTE ?= 1
 # IOC host IP regular expression
 IOC_HOST_IP_REGEX ?= "^(134|172).*$"
 
@@ -92,6 +94,7 @@ st.cmd: _check_versions
 		--macro plc_hostname_override='$(PLC_HOSTNAME)' \
 		--macro ignore_linter_errors='$(IGNORE_LINTER_ERRORS)' \
 		--macro ioc_host_ip_regex='$(IOC_HOST_IP_REGEX)' \
+		--macro add_plc_route='$(ADD_PLC_ROUTE)' \
 		--template "$(TEMPLATE_PATH)/$(STCMD_TEMPLATE)":"st.cmd" \
 		$(PYTMC_OPTS) \
 		$(PYTMC_TEMPLATE_OPTS) \
