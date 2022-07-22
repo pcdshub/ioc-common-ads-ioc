@@ -1,0 +1,17 @@
+record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY)") {
+    field(DISP, "TRUE")
+    field(DTYP, "Soft Channel")
+    field(PINI, "YES")
+    field(SCAN, "Passive")
+    field(VAL, "$(VERSION) -> $(VENDOR)")
+    info(archive, "monitor 1: VAL")
+}
+
+record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY):Vendor") {
+    field(DISP, "TRUE")
+    field(DTYP, "Soft Channel")
+    field(PINI, "YES")
+    field(SCAN, "Passive")
+    field(VAL, "$(VENDOR)")
+    info(archive, "monitor 1: VAL")
+}

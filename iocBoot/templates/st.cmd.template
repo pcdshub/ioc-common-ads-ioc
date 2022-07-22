@@ -155,11 +155,24 @@ dbLoadRecords("iocSoft.db", "IOC={{prefix}}")
 dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{pv_delimiter}}")
 dbLoadRecords("caPutLog.db", "IOC=$(IOC)")
 
-## TwinCAT task and application databases ##
+## TwinCAT task, application, and project information databases ##
 {% for priority, (_, task) in plc.instance.task_pous.items() %}
 dbLoadRecords("TwinCAT_TaskInfo.db", "PORT=$(ASYN_PORT),PREFIX={{prefix}},IDX={{task.array_index}}")
 {% endfor %}
 dbLoadRecords("TwinCAT_AppInfo.db", "PORT=$(ASYN_PORT), PREFIX={{prefix}}")
+
+dbLoadRecords("TwinCAT_Project.db", "PREFIX={{prefix}},PROJECT={{ project.filename.name }},HASH={{ project.git_info.sha }},VERSION={{ project.git_info.describe }},PYTMC={{ pytmc_version}},PLC_HOST={{ plc_host }}")
+
+{% for library, info in get_library_versions(plc) | dictsort %}
+{%- set libraryname = library | replace(" ", "_") %}
+{%- if "PlaceholderReference" in info and "PlaceholderResolution" in info %}
+#   {{ library }}: {{ info.PlaceholderReference.version }} -> {{ info.PlaceholderResolution.version }} ({{ info.PlaceholderResolution.vendor }})
+dbLoadRecords("TwinCAT_Dependency.db", "PREFIX={{prefix}},DEPENDENCY={{ libraryname }},VERSION={{ info.PlaceholderResolution.version }},VENDOR={{ info.PlaceholderResolution.vendor }}")
+{% elif "PlaceholderReference" in info %}
+#   {{ library }}: {{ info.PlaceholderReference.version }} ({{ info.PlaceholderReference.vendor }})
+dbLoadRecords("TwinCAT_Dependency.db", "PREFIX={{prefix}},DEPENDENCY={{ libraryname }},VERSION={{ info.PlaceholderReference.version }},VENDOR={{ info.PlaceholderReference.vendor }}")
+{% endif %}
+{%- endfor %}
 
 cd "$(IOC_TOP)"
 

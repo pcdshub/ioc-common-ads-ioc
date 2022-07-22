@@ -28,6 +28,8 @@ DB += EthercatMCslit_soft.template
 DB += caPutLog.db
 DB += TwinCAT_TaskInfo.db
 DB += TwinCAT_AppInfo.db
+DB += TwinCAT_Dependency.db
+DB += TwinCAT_Project.db
 
 DB_INSTALLS += $(IOCADMIN)/db/iocSoft.db
 DB_INSTALLS += $(IOCADMIN)/db/devIocInfo.db
