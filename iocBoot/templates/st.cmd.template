@@ -2,13 +2,23 @@
 ################### AUTO-GENERATED DO NOT EDIT ###################
 {% set project, plc = get_plc_by_name(projects, plc) -%}
 {%- set plc_host = plc_hostname_override or plc.target_ip %}
+{%- set plc_ams_net_id = plc_ams_net_id_override or plc.ams_id %}
 #
 #         Project: {{ project.filename.name }}
 #        PLC name: {{ plc.name }} ({{ plc.link_name }})
 # Generated using: pytmc {{ pytmc_version}}
 # Project version: {{ project.git_info.describe }}
 #    Project hash: {{ project.git_info.sha }}
-#     PLC IP/host: {{ plc.target_ip}} ({{ plc_hostname_override }})
+{% if plc_hostname_override %}
+#     PLC IP/host: {{ plc_hostname_override }} (Specified in Makefile; project has: {{ plc.target_ip }})
+{% else %}
+#     PLC IP/host: {{ plc.target_ip}}
+{% endif %}
+{% if plc_ams_net_id_override %}
+#      PLC Net ID: {{ plc_ams_net_id_override }} (Specified in Makefile; project has: {{ plc.ams_id }})
+{% else %}
+#      PLC Net ID: {{ plc.ams_id}}
+{% endif %}
 #
 # Libraries:
 #
@@ -59,9 +69,9 @@ dbLoadDatabase("$(ADS_IOC_TOP)/dbd/adsIoc.dbd")
 adsIoc_registerRecordDeviceDriver(pdbbase)
 
 epicsEnvSet("ASYN_PORT",        "ASYN_PLC")
-epicsEnvSet("IPADDR",           "{{plc_host}}")
-epicsEnvSet("AMSID",            "{{plc.ams_id}}")
-epicsEnvSet("AMS_PORT",         "{{plc.port}}")
+epicsEnvSet("IPADDR",           "{{ plc_host }}")
+epicsEnvSet("AMSID",            "{{ plc_ams_net_id }}")
+epicsEnvSet("AMS_PORT",         "{{ plc.port }}")
 epicsEnvSet("ADS_MAX_PARAMS",   "{{ max_params }}")
 epicsEnvSet("ADS_SAMPLE_MS",    "50")
 epicsEnvSet("ADS_MAX_DELAY_MS", "100")
