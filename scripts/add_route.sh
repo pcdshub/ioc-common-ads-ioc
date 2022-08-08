@@ -61,7 +61,7 @@ find_ioc_ip() {
         exit 1
     fi
 
-    for ipaddr in $(dig +short "$(hostname)"); do
+    for ipaddr in $(hostname -I); do
         if [[ "$ipaddr" =~ ${regex} ]]; then
             echo "$ipaddr"
             return
