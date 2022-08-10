@@ -1,4 +1,4 @@
-record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY)") {
+record(stringout, "$(PREFIX):ProjectInfo:$(DEPENDENCY)") {
     field(DISP, "1")
     field(DTYP, "Soft Channel")
     field(PINI, "YES")
@@ -7,7 +7,7 @@ record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY)") {
     info(archive, "monitor 1: VAL")
 }
 
-record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY):Vendor") {
+record(stringout, "$(PREFIX):ProjectInfo:$(DEPENDENCY):Vendor") {
     field(DISP, "1")
     field(DTYP, "Soft Channel")
     field(PINI, "YES")
