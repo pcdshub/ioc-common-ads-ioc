@@ -20,7 +20,14 @@
 {% else %}
 #      PLC Net ID: {{ plc.ams_id}}
 {% endif %}
-#  Production IOC: {{ production_ioc }}
+{% if production_ioc %}
+#  ** Production mode IOC **
+#  Using /cds/data/iocData for autosave and archiver settings.
+{% else %}
+# ** DEVELOPMENT MODE IOC **
+# * Using IOC boot directory for autosave.
+# * Archiver settings will not be configured.
+{% endif %}
 #
 # Libraries:
 #
@@ -191,7 +198,7 @@ cd "$(IOC_TOP)"
 ## PLC Project Database files ##
 {% if plc.tmc %}
 {% for db in db_filenames %}
-dbLoadRecords("{{ db }}", "PORT={{ asyn_port }},{{ db_parameters }}")
+dbLoadRecords("{{ db }}", "PORT=$(ASYN_PORT},{{ db_parameters }}")
 {% endfor %}
 {%- set queue_size_base = queue_size_base | int %}
 {%- set queue_size_scale = queue_size_scale | int %}
@@ -203,7 +210,7 @@ callbackSetQueueSize({{ callback_queue_size }})
 
 {% if additional_db_files %}
 {% for db in additional_db_files %}
-dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{pv_delimiter}},IOCNAME=$(IOC),{{ db.macros }}")
+dbLoadRecords("{{ db.file }}", "PORT=$(ASYN_PORT),PREFIX={{prefix}}{{pv_delimiter}},IOCNAME=$(IOC),{{ db.macros }}")
 
 {% endfor %}
 {% endif %}
