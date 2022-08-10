@@ -42,12 +42,8 @@ IGNORE_LINTER_ERRORS ?= 0
 ADD_PLC_ROUTE ?= 1
 # IOC host IP regular expression
 IOC_HOST_IP_REGEX ?= ^172.*$
-
-ifeq ($(PRODUCTION_IOC), 1)
-	IOC_DATA_PATH ?= /cds/data/iocData
-else
-	IOC_DATA_PATH ?= $(HOME)/iocData
-endif
+# This is where IOC data goes:
+IOC_DATA_PATH ?= /cds/data/iocData
 
 ARCHIVE_PATH ?= $(IOC_DATA_PATH)/$(IOC_NAME)/archive
 BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
@@ -55,14 +51,13 @@ DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOC),IOC=$$(IOC)'
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
 
-all: build iocdata clean
+all: build clean
 
 help:
 	@echo "Available commands:"
 	@echo "    all:      builds the IOC and cleans the temporary files"
 	@echo "    build:    builds the st.cmd, databases, envPaths, etc."
 	@echo "    clean:    cleans temporary pytmc files in $(BUILD_PATH)"
-	@echo "    iocdata:  create and/or update iocData directories (autosave, etc.)"
 	@echo "    lint:     lint the pragmas"
 	@echo "    lintdb:   lint the generated .db file against the IOC dbd"
 	@echo "    summary:  tool shortcut - display a PLC project summary"
@@ -98,6 +93,7 @@ st.cmd: _check_versions
 		--macro ignore_linter_errors='$(IGNORE_LINTER_ERRORS)' \
 		--macro ioc_host_ip_regex='$(IOC_HOST_IP_REGEX)' \
 		--macro add_plc_route='$(ADD_PLC_ROUTE)' \
+		--macro production_ioc='$(PRODUCTION_IOC)' \
 		--template "$(TEMPLATE_PATH)/$(STCMD_TEMPLATE)":"st.cmd" \
 		$(PYTMC_OPTS) \
 		$(PYTMC_TEMPLATE_OPTS) \
@@ -155,7 +151,6 @@ build:
 	@echo "IOC name: $(IOC_NAME)"
 	@echo "PYTMC_OPTS: $(PYTMC_OPTS)"
 	@echo "PROJECT_PATH: $(PROJECT_PATH)"
-	@echo "ARCHIVE_PATH: $(ARCHIVE_PATH)"
 	@echo "Absolute project path: " $(call pyabspath,$(PROJECT_PATH))
 	@echo "-----------------------------------------------------------"
 	@echo ""
@@ -181,20 +176,6 @@ clean:
 	fi
 	@echo "Done"
 
-
-iocdata:
-	@echo "Creating IOC data directory"
-	install --mode 2775 --group ps-ioc --directory $(IOC_DATA_PATH)/$(IOC_NAME)/{iocInfo,archive,logs,autosave}
-	@echo "Creating autosave files directory"
-	install --mode 2775 --group ps-ioc --directory $(IOC_INSTANCE_PATH)/autosave
-	@shopt -s nullglob; \
-	for filename in "$(IOC_INSTANCE_PATH)"/*.archive; \
-	do \
-		if [ -d "$(ARCHIVE_PATH)" ]; then \
-			echo "* Installing archive file: $$(basename $$filename)"; \
-			install -p -m 0444 "$$filename" "$(ARCHIVE_PATH)"; \
-		fi; \
-	done
 
 lint: _check_versions
 	@echo "Linting the pytmc pragmas. Use \`make $@ PYTMC_OPTS=...\` to pass args to pytmc." > /dev/stderr
@@ -234,4 +215,4 @@ types: _check_versions
 	pytmc types "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-.PHONY: all _check_versions st.cmd db envPaths copy_build_output build clean iocdata lint lintdb summary code outline debug types
+.PHONY: all _check_versions st.cmd db envPaths copy_build_output build clean lint lintdb summary code outline debug types

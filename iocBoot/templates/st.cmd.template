@@ -19,6 +19,7 @@
 {% else %}
 #      PLC Net ID: {{ plc.ams_id}}
 {% endif %}
+#  Production IOC: {{ production_ioc }}
 #
 # Libraries:
 #
@@ -206,22 +207,39 @@ dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{pv_delim
 {% endfor %}
 {% endif %}
 
-# Setup autosave
-set_savefile_path( "$(IOC_DATA)/$(IOC)/autosave" )
-set_requestfile_path( "$(IOC_TOP)/autosave" )
+# Autosave and archive settings:
+save_restoreSet_status_prefix("{{prefix}}{{pv_delimiter}}")
+save_restoreSet_IncompleteSetsOk(1)
+save_restoreSet_DatedBackupFiles(1)
+set_pass0_restoreFile("info_positions.sav")
+set_pass1_restoreFile("info_settings.sav")
 
-save_restoreSet_status_prefix( "{{prefix}}{{pv_delimiter}}" )
-save_restoreSet_IncompleteSetsOk( 1 )
-save_restoreSet_DatedBackupFiles( 1 )
-set_pass0_restoreFile( "info_positions.sav" )
-set_pass1_restoreFile( "info_settings.sav" )
+{% if production_ioc %}
+# ** Production IOC Settings **
+set_savefile_path("$(IOC_DATA)/$(IOC)/autosave")
+set_requestfile_path("$(IOC_DATA)/$(IOC)/autosave")
 
-cd "$(IOC_TOP)/autosave"
+# Production IOC autosave files go in iocData:
+cd "$(IOC_DATA)/$(IOC)/autosave"
+
+# Create info_positions.req and info_settings.req
 makeAutosaveFiles()
+
+cd "$(IOC_DATA)/$(IOC)/archive"
+
+# Create $(IOC).archive
+makeArchiveFromDbInfo("$(IOC).archive", "archive")
+cd "$(IOC_TOP)"
+{% else %}
+# ** Development IOC Settings **
+# Development IOC autosave and archive files go in the IOC top directory:
 cd "$(IOC_TOP)"
 
-# Create the archiver file
-makeArchiveFromDbInfo("$(IOC_DATA)/$(IOC)/archive/$(IOC).archive", "archive")
+# (Development mode) Create info_positions.req and info_settings.req
+makeAutosaveFiles()
+# (Development mode) Create the archiver file
+makeArchiveFromDbInfo("$(IOC).archive", "archive")
+{% endif %}
 
 # Configure access security: this is required for caPutLog.
 asSetFilename("$(ACF_FILE)")
