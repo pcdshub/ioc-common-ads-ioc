@@ -1,6 +1,7 @@
 #!{{hashbang}}
 ################### AUTO-GENERATED DO NOT EDIT ###################
-{% set project, plc = get_plc_by_name(projects, plc) -%}
+{%  set production_ioc = production_ioc | int %}
+{%- set project, plc = get_plc_by_name(projects, plc) -%}
 {%- set plc_host = plc_hostname_override or plc.target_ip %}
 {%- set plc_ams_net_id = plc_ams_net_id_override or plc.ams_id %}
 #
@@ -206,7 +207,6 @@ dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{pv_delim
 
 {% endfor %}
 {% endif %}
-
 # Autosave and archive settings:
 save_restoreSet_status_prefix("{{prefix}}{{pv_delimiter}}")
 save_restoreSet_IncompleteSetsOk(1)
