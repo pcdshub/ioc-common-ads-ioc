@@ -1,6 +1,8 @@
 #!{{hashbang}}
 ################### AUTO-GENERATED DO NOT EDIT ###################
 {%  set production_ioc = production_ioc | int %}
+{%- set git_sha = project.git_info.sha or "" %}
+{%- set short_git_sha = git_sha[:7] %}
 {%- set project, plc = get_plc_by_name(projects, plc) -%}
 {%- set plc_host = plc_hostname_override or plc.target_ip %}
 {%- set plc_ams_net_id = plc_ams_net_id_override or plc.ams_id %}
@@ -180,7 +182,7 @@ dbLoadRecords("TwinCAT_TaskInfo.db", "PORT=$(ASYN_PORT),PREFIX={{prefix}},IDX={{
 {% endfor %}
 dbLoadRecords("TwinCAT_AppInfo.db", "PORT=$(ASYN_PORT), PREFIX={{prefix}}")
 
-dbLoadRecords("TwinCAT_Project.db", "PREFIX={{prefix}},PROJECT={{ project.filename.name }},HASH={{ project.git_info.sha }},VERSION={{ project.git_info.describe }},PYTMC={{ pytmc_version}},PLC_HOST={{ plc_host }}")
+dbLoadRecords("TwinCAT_Project.db", "PREFIX={{prefix}},PROJECT={{ project.filename.name }},HASH={{ short_git_sha }},VERSION={{ project.git_info.describe }},PYTMC={{ pytmc_version}},PLC_HOST={{ plc_host }}")
 
 {% for library, info in get_library_versions(plc) | dictsort %}
 {%- set libraryname = library | replace(" ", "_") %}
@@ -198,7 +200,7 @@ cd "$(IOC_TOP)"
 ## PLC Project Database files ##
 {% if plc.tmc %}
 {% for db in db_filenames %}
-dbLoadRecords("{{ db }}", "PORT=$(ASYN_PORT},{{ db_parameters }}")
+dbLoadRecords("{{ db }}", "PORT=$(ASYN_PORT),{{ db_parameters }}")
 {% endfor %}
 {%- set queue_size_base = queue_size_base | int %}
 {%- set queue_size_scale = queue_size_scale | int %}
