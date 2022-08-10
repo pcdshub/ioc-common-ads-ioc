@@ -1,5 +1,5 @@
 record(lsi, "$(PREFIX):ProjectInfo:PLCHost") {
-    field(DISP, "TRUE")
+    field(DISP, "1")
     field(DTYP, "Soft Channel")
     field(PINI, "YES")
     field(SCAN, "Passive")
@@ -8,7 +8,7 @@ record(lsi, "$(PREFIX):ProjectInfo:PLCHost") {
 }
 
 record(lsi, "$(PREFIX):ProjectInfo:Project") {
-    field(DISP, "TRUE")
+    field(DISP, "1")
     field(DTYP, "Soft Channel")
     field(PINI, "YES")
     field(SCAN, "Passive")
@@ -17,7 +17,7 @@ record(lsi, "$(PREFIX):ProjectInfo:Project") {
 }
 
 record(lsi, "$(PREFIX):ProjectInfo:Hash") {
-    field(DISP, "TRUE")
+    field(DISP, "1")
     field(DTYP, "Soft Channel")
     field(PINI, "YES")
     field(SCAN, "Passive")
@@ -26,7 +26,7 @@ record(lsi, "$(PREFIX):ProjectInfo:Hash") {
 }
 
 record(lsi, "$(PREFIX):ProjectInfo:Version") {
-    field(DISP, "TRUE")
+    field(DISP, "1")
     field(DTYP, "Soft Channel")
     field(PINI, "YES")
     field(SCAN, "Passive")
@@ -35,7 +35,7 @@ record(lsi, "$(PREFIX):ProjectInfo:Version") {
 }
 
 record(lsi, "$(PREFIX):ProjectInfo:Pytmc") {
-    field(DISP, "TRUE")
+    field(DISP, "1")
     field(DTYP, "Soft Channel")
     field(PINI, "YES")
     field(SCAN, "Passive")

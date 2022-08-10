@@ -1,5 +1,5 @@
 record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY)") {
-    field(DISP, "TRUE")
+    field(DISP, "1")
     field(DTYP, "Soft Channel")
     field(PINI, "YES")
     field(SCAN, "Passive")
@@ -8,7 +8,7 @@ record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY)") {
 }
 
 record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY):Vendor") {
-    field(DISP, "TRUE")
+    field(DISP, "1")
     field(DTYP, "Soft Channel")
     field(PINI, "YES")
     field(SCAN, "Passive")
