@@ -1,17 +1,15 @@
-record(stringout, "$(PREFIX):ProjectInfo:$(DEPENDENCY)") {
-    field(DISP, "1")
+record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY)") {
+    field(DISP, 1)
     field(DTYP, "Soft Channel")
+    field(INP, ["$(VERSION) -> $(VENDOR)"])
     field(PINI, "YES")
-    field(SCAN, "Passive")
-    field(VAL, "$(VERSION) -> $(VENDOR)")
     info(archive, "monitor 1: VAL")
 }
 
-record(stringout, "$(PREFIX):ProjectInfo:$(DEPENDENCY):Vendor") {
-    field(DISP, "1")
+record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY):Vendor") {
+    field(DISP, 1)
     field(DTYP, "Soft Channel")
+    field(INP, ["$(VENDOR)"])
     field(PINI, "YES")
-    field(SCAN, "Passive")
-    field(VAL, "$(VENDOR)")
     info(archive, "monitor 1: VAL")
 }

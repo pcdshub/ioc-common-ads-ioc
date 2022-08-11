@@ -1,44 +1,39 @@
-record(stringout, "$(PREFIX):ProjectInfo:PLCHost") {
+record(lsi, "$(PREFIX):ProjectInfo:PLCHost") {
     field(DISP, "1")
     field(DTYP, "Soft Channel")
+    field(INP, ["$(PLC_HOST)"])
     field(PINI, "YES")
-    field(SCAN, "Passive")
-    field(VAL, "$(PLC_HOST)")
     info(archive, "monitor 1: VAL")
 }
 
-record(stringout, "$(PREFIX):ProjectInfo:Project") {
+record(lsi, "$(PREFIX):ProjectInfo:Project") {
     field(DISP, "1")
     field(DTYP, "Soft Channel")
+    field(INP, ["$(PROJECT)"])
     field(PINI, "YES")
-    field(SCAN, "Passive")
-    field(VAL, "$(PROJECT)")
     info(archive, "monitor 1: VAL")
 }
 
-record(stringout, "$(PREFIX):ProjectInfo:Hash") {
+record(lsi, "$(PREFIX):ProjectInfo:Hash") {
     field(DISP, "1")
     field(DTYP, "Soft Channel")
+    field(INP, ["$(HASH)"])
     field(PINI, "YES")
-    field(SCAN, "Passive")
-    field(VAL, "$(HASH)")
     info(archive, "monitor 1: VAL")
 }
 
-record(stringout, "$(PREFIX):ProjectInfo:Version") {
+record(lsi, "$(PREFIX):ProjectInfo:Version") {
     field(DISP, "1")
     field(DTYP, "Soft Channel")
+    field(INP, ["$(VERSION)"])
     field(PINI, "YES")
-    field(SCAN, "Passive")
-    field(VAL, "$(VERSION)")
     info(archive, "monitor 1: VAL")
 }
 
-record(stringout, "$(PREFIX):ProjectInfo:Pytmc") {
+record(lsi, "$(PREFIX):ProjectInfo:Pytmc") {
     field(DISP, "1")
     field(DTYP, "Soft Channel")
+    field(INP, ["$(PYTMC)"])
     field(PINI, "YES")
-    field(SCAN, "Passive")
-    field(VAL, "$(PYTMC)")
     info(archive, "monitor 1: VAL")
 }
