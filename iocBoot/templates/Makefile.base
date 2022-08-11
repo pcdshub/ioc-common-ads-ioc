@@ -22,7 +22,7 @@ DBD_PATH ?= $(IOC_TOP)/dbd/adsIoc.dbd
 PROJECT_PATH ?= $(IOC_INSTANCE_PATH)/../../$(PROJECT_NAME)/$(PROJECT_NAME).tsproj
 TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
-IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
+ADS_IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
 PRODUCTION_IOC ?= 0
 PYTMC_MIN_VERSION ?= 2.13.0  # <-- TODO update before merging
 # The minimum callback queue size for EPICS IOCs:
@@ -44,9 +44,10 @@ ADD_PLC_ROUTE ?= 1
 IOC_HOST_IP_REGEX ?= ^172.*$
 # This is where IOC data goes:
 IOC_DATA_PATH ?= /cds/data/iocData
-
-ARCHIVE_PATH ?= $(IOC_DATA_PATH)/$(IOC_NAME)/archive
+# This is where the scripts and database are built:
 BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
+# This is the default set of macro parameters used for all database files,
+# including $PREFIX, $IOCNAME, and $IOC.
 DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOC),IOC=$$(IOC)'
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
@@ -81,7 +82,7 @@ st.cmd: _check_versions
 		pytmc template \
 		--macro prefix="$(PREFIX)" \
 		--macro plc="$(PLC)" \
-		--macro ioc_name="$(IOC_NAME)" \
+		--macro ads_ioc_name="$(ADS_IOC_NAME)" \
 		--macro user="$(USER)" \
 		--macro hashbang="$(BINARY_PATH)" \
 		--macro db_parameters=$(DB_PARAMETERS) \
@@ -109,9 +110,9 @@ db: _check_versions
 		"$(PLC).db"
 
 envPaths:
-	@echo "* Copying envPaths and fixing IOC_TOP..."
+	@echo "* Copying envPaths and fixing variables..."
 	@cat "$(TEMPLATE_PATH)"/envPaths | \
-		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$(IOC_NAME)")/' \
+		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$${IOC=$(ADS_IOC_NAME)}")/' \
 		> "$(IOC_INSTANCE_PATH)"/envPaths
 	@echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
 	@echo 'epicsEnvSet("IOC_DATA", "$(IOC_DATA_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
@@ -148,7 +149,7 @@ build:
 	@echo "-----------------------------------------------------------"
 	@echo "Build path: $(BUILD_PATH)"
 	@echo "PLC: $(PLC)"
-	@echo "IOC name: $(IOC_NAME)"
+	@echo "IOC name: $(ADS_IOC_NAME) (* Does this match IOC Manager? *)"
 	@echo "PYTMC_OPTS: $(PYTMC_OPTS)"
 	@echo "PROJECT_PATH: $(PROJECT_PATH)"
 	@echo "Absolute project path: " $(call pyabspath,$(PROJECT_PATH))
