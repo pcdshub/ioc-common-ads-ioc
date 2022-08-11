@@ -19,6 +19,7 @@ record(lsi, "$(PREFIX):ProjectInfo:Hash") {
     field(DTYP, "Soft Channel")
     field(INP, ["$(HASH)"])
     field(PINI, "YES")
+    field(SIZV, 100)
     info(archive, "monitor 1: VAL")
 }
 

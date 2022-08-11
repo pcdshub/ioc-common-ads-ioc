@@ -3,6 +3,7 @@ record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY)") {
     field(DTYP, "Soft Channel")
     field(INP, ["$(VERSION) -> $(VENDOR)"])
     field(PINI, "YES")
+    field(SIZV, 100)
     info(archive, "monitor 1: VAL")
 }
 
@@ -11,5 +12,6 @@ record(lsi, "$(PREFIX):ProjectInfo:$(DEPENDENCY):Vendor") {
     field(DTYP, "Soft Channel")
     field(INP, ["$(VENDOR)"])
     field(PINI, "YES")
+    field(SIZV, 100)
     info(archive, "monitor 1: VAL")
 }
