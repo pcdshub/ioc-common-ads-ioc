@@ -42,6 +42,9 @@ CAPUTLOG=$(EPICS_MODULES)/caPutLog/$(CAPUTLOG_MODULE_VERSION)
 # ===============================================================
 EPICS_BASE=$(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION)
 
+# Set externally by tools that want to introspect Makefiles:
+ifneq ($(_DEPENDENCY_CHECK_),1)
+
 # Check for valid EPICS_BASE
 ifeq ($(wildcard $(EPICS_BASE)/include),)
 $(error Invalid EPICS_BASE: $(EPICS_BASE)/include)
@@ -74,4 +77,6 @@ endif
 
 ifeq ($(wildcard $(CAPUTLOG)/lib/$(T_A)),)
 $(error Invalid CAPUTLOG: $(CAPUTLOG)/lib/$(T_A))
+endif
+
 endif
