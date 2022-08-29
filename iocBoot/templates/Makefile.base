@@ -49,6 +49,8 @@ BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
 # This is the default set of macro parameters used for all database files,
 # including $PREFIX, $IOCNAME, and $IOC.
 DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOC),IOC=$$(IOC)'
+# Additional database files can be specified in this space-delimited list:
+ADDITIONAL_DB_FILES ?=
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
 
@@ -95,6 +97,7 @@ st.cmd: _check_versions
 		--macro ioc_host_ip_regex='$(IOC_HOST_IP_REGEX)' \
 		--macro add_plc_route='$(ADD_PLC_ROUTE)' \
 		--macro production_ioc='$(PRODUCTION_IOC)' \
+		--macro additional_db_files='$(ADDITIONAL_DB_FILES)' \
 		--template "$(TEMPLATE_PATH)/$(STCMD_TEMPLATE)":"st.cmd" \
 		$(PYTMC_OPTS) \
 		$(PYTMC_TEMPLATE_OPTS) \

@@ -213,10 +213,11 @@ callbackSetQueueSize({{ callback_queue_size }})
 {% endif %}
 
 {% if additional_db_files %}
-{% for db in additional_db_files %}
-dbLoadRecords("{{ db.file }}", "PORT=$(ASYN_PORT),PREFIX={{prefix}}{{pv_delimiter}},IOCNAME=$(IOC),{{ db.macros }}")
-
+{% for db in additional_db_files.split(" ") %}
+# Load user-specified database: {{ db }}
+dbLoadRecords("{{ db }}", "PORT=$(ASYN_PORT),{{ db_parameters }}")
 {% endfor %}
+
 {% endif %}
 # Autosave and archive settings:
 save_restoreSet_status_prefix("{{prefix}}{{pv_delimiter}}")
