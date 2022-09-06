@@ -1,5 +1,60 @@
 #!{{hashbang}}
-###### AUTO-GENERATED DO NOT EDIT ##############
+################### AUTO-GENERATED DO NOT EDIT ###################
+{%  set production_ioc = production_ioc | int %}
+{%- set project, plc = get_plc_by_name(projects, plc) -%}
+{%- set plc_host = plc_hostname_override or plc.target_ip %}
+{%- set plc_ams_net_id = plc_ams_net_id_override or plc.ams_id %}
+#
+#         Project: {{ project.filename.name }}
+#        PLC name: {{ plc.name }} ({{ plc.link_name }})
+# Generated using: pytmc {{ pytmc_version}}
+# Project version: {{ project.git_info.describe }}
+#    Project hash: {{ project.git_info.sha }}
+{% if plc_hostname_override %}
+#     PLC IP/host: {{ plc_hostname_override }} (Specified in Makefile; project has: {{ plc.target_ip }})
+{% else %}
+#     PLC IP/host: {{ plc.target_ip}}
+{% endif %}
+{% if plc_ams_net_id_override %}
+#      PLC Net ID: {{ plc_ams_net_id_override }} (Specified in Makefile; project has: {{ plc.ams_id }})
+{% else %}
+#      PLC Net ID: {{ plc.ams_id}}
+{% endif %}
+{% if production_ioc %}
+#  ** Production mode IOC **
+#  Using /cds/data/iocData for autosave and archiver settings.
+{% else %}
+# ** DEVELOPMENT MODE IOC **
+# * Using IOC boot directory for autosave.
+# * Archiver settings will not be configured.
+{% endif %}
+#
+# Libraries:
+#
+{% for library, info in get_library_versions(plc) | dictsort %}
+{% if "PlaceholderReference" in info and "PlaceholderResolution" in info %}
+#   {{ library }}: {{ info.PlaceholderReference.version }} -> {{ info.PlaceholderResolution.version }} ({{ info.PlaceholderResolution.vendor }})
+{% elif "PlaceholderReference" in info %}
+#   {{ library }}: {{ info.PlaceholderReference.version }} ({{ info.PlaceholderReference.vendor }})
+{% endif %}
+{% endfor %}
+#
+################### AUTO-GENERATED DO NOT EDIT ###################
+{%- if plc.tmc %}
+
+{%- set allow_errors = ignore_linter_errors | int %}
+{%- set db_filenames, records = generate_records(plc, allow_errors=allow_errors) %}
+{%- set num_records = records | length %}
+{%- set max_params = num_records + 1000 %}
+
+{%- else %}
+
+{%- set db_filenames = [] %}
+{%- set records = {} %}
+{%- set num_records = 0 %}
+{%- set max_params = 10000 %}
+
+{%- endif %}
 
 < envPaths
 
@@ -10,23 +65,30 @@ epicsEnvSet("LOCATION", "{{prefix}}" )
 epicsEnvSet("IOCSH_PS1", "$(IOC)> " )
 epicsEnvSet("ACF_FILE", "$(ADS_IOC_TOP)/iocBoot/templates/unrestricted.acf")
 
+{% if production_ioc %}
 # Run common startup commands for linux soft IOC's
 < /reg/d/iocCommon/All/pre_linux.cmd
 
+{% endif %}
 # Register all support components
 dbLoadDatabase("$(ADS_IOC_TOP)/dbd/adsIoc.dbd")
 adsIoc_registerRecordDeviceDriver(pdbbase)
 
-epicsEnvSet("ASYN_PORT",        "{{asyn_port}}")
-epicsEnvSet("IPADDR",           "{{plc_ip}}")
-epicsEnvSet("AMSID",            "{{plc_ams_id}}")
-epicsEnvSet("AMS_PORT",         "{{plc_ads_port}}")
-epicsEnvSet("ADS_MAX_PARAMS",   "10000")
+epicsEnvSet("ASYN_PORT",        "ASYN_PLC")
+epicsEnvSet("IPADDR",           "{{ plc_host }}")
+epicsEnvSet("AMSID",            "{{ plc_ams_net_id }}")
+epicsEnvSet("AMS_PORT",         "{{ plc.port }}")
+epicsEnvSet("ADS_MAX_PARAMS",   "{{ max_params }}")
 epicsEnvSet("ADS_SAMPLE_MS",    "50")
 epicsEnvSet("ADS_MAX_DELAY_MS", "100")
 epicsEnvSet("ADS_TIMEOUT_MS",   "1000")
 epicsEnvSet("ADS_TIME_SOURCE",  "0")
 
+{% if add_plc_route | int != 0 %}
+# Add a route to the PLC automatically:
+system("${ADS_IOC_TOP}/scripts/add_route.sh {{ plc_host }} {{ ioc_host_ip_regex }}")
+
+{% endif %}
 # adsAsynPortDriverConfigure(portName, ipaddr, amsaddr, amsport,
 #    asynParamTableSize, priority, noAutoConnect, defaultSampleTimeMS,
 #    maxDelayTimeMS, adsTimeoutMS, defaultTimeSource)
@@ -54,10 +116,12 @@ adsAsynPortDriverConfigure("$(ASYN_PORT)", "$(IPADDR)", "$(AMSID)", "$(AMS_PORT)
 
 cd "$(ADS_IOC_TOP)/db"
 
+{% set motors = get_motors(plc) %}
 {% if motors %}
+{%- set nc = get_nc(project) %}
 
-epicsEnvSet("MOTOR_PORT",     "{{motor_port}}")
-epicsEnvSet("PREFIX",         "{{prefix}}{{delim}}")
+epicsEnvSet("MOTOR_PORT",     "PLC_ADS")
+epicsEnvSet("PREFIX",         "{{prefix}}{{pv_delimiter}}")
 epicsEnvSet("NUMAXES",        "{{nc.axis_by_id|max}}")
 epicsEnvSet("MOVE_POLL_RATE", "200")
 epicsEnvSet("IDLE_POLL_RATE", "1000")
@@ -109,41 +173,85 @@ dbLoadRecords("EthercatMCdebug.template", "PREFIX=$(MOTOR_PREFIX), MOTOR_NAME=$(
 {% endif %}
 
 dbLoadRecords("iocSoft.db", "IOC={{prefix}}")
-dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{delim}}")
-dbLoadRecords("caPutLog.db", "IOC=${IOC}")
+dbLoadRecords("save_restoreStatus.db", "P={{prefix}}{{pv_delimiter}}")
+dbLoadRecords("caPutLog.db", "IOC=$(IOC)")
 
-## TwinCat System Databse files ##
-dbLoadRecords("TwinCAT_TaskInfo.db", "PORT={{ asyn_port }}, PREFIX={{prefix}}")
-dbLoadRecords("TwinCAT_AppInfo.db", "PORT={{ asyn_port }}, PREFIX={{prefix}}")
+## TwinCAT task, application, and project information databases ##
+{% for priority, (_, task) in plc.instance.task_pous.items() %}
+dbLoadRecords("TwinCAT_TaskInfo.db", "PORT=$(ASYN_PORT),PREFIX={{prefix}},IDX={{task.array_index}}")
+{% endfor %}
+dbLoadRecords("TwinCAT_AppInfo.db", "PORT=$(ASYN_PORT), PREFIX={{prefix}}")
+
+{% set git_sha = project.git_info.sha or "" %}
+{%- set short_git_sha = git_sha[:7] %}
+dbLoadRecords("TwinCAT_Project.db", "PREFIX={{prefix}},PROJECT={{ project.filename.name }},HASH={{ short_git_sha }},VERSION={{ project.git_info.describe }},PYTMC={{ pytmc_version}},PLC_HOST={{ plc_host }}")
+
+{% for library, info in get_library_versions(plc) | dictsort %}
+{%- set libraryname = library | replace(" ", "_") %}
+{%- if "PlaceholderReference" in info and "PlaceholderResolution" in info %}
+#   {{ library }}: {{ info.PlaceholderReference.version }} -> {{ info.PlaceholderResolution.version }} ({{ info.PlaceholderResolution.vendor }})
+dbLoadRecords("TwinCAT_Dependency.db", "PREFIX={{prefix}},DEPENDENCY={{ libraryname }},VERSION={{ info.PlaceholderResolution.version }},VENDOR={{ info.PlaceholderResolution.vendor }}")
+{% elif "PlaceholderReference" in info %}
+#   {{ library }}: {{ info.PlaceholderReference.version }} ({{ info.PlaceholderReference.vendor }})
+dbLoadRecords("TwinCAT_Dependency.db", "PREFIX={{prefix}},DEPENDENCY={{ libraryname }},VERSION={{ info.PlaceholderReference.version }},VENDOR={{ info.PlaceholderReference.vendor }}")
+{% endif %}
+{%- endfor %}
 
 cd "$(IOC_TOP)"
 
-## Database files ##
-< "$(IOC_TOP)/load_plc_databases.cmd"
-
-{% if additional_db_files %}
-{% for db in additional_db_files %}
-dbLoadRecords("{{ db.file }}", "PORT={{ asyn_port }},PREFIX={{prefix}}{{delim}},IOCNAME=$(IOC),{{ db.macros }}")
-
+## PLC Project Database files ##
+{% if plc.tmc %}
+{% for db in db_filenames %}
+dbLoadRecords("{{ db }}", "PORT=$(ASYN_PORT),{{ db_parameters }}")
 {% endfor %}
+{%- set queue_size_base = queue_size_base | int %}
+{%- set queue_size_scale = queue_size_scale | int %}
+{%- set callback_queue_size = queue_size_base + queue_size_scale * num_records %}
+
+# Total records: {{ records | length }}
+callbackSetQueueSize({{ callback_queue_size }})
 {% endif %}
 
-# Setup autosave
-set_savefile_path( "$(IOC_DATA)/$(IOC)/autosave" )
-set_requestfile_path( "$(IOC_TOP)/autosave" )
+{% if additional_db_files %}
+{% for db in additional_db_files.split(" ") %}
+# Load user-specified database: {{ db }}
+dbLoadRecords("{{ db }}", "PORT=$(ASYN_PORT),{{ db_parameters }}")
+{% endfor %}
 
-save_restoreSet_status_prefix( "{{prefix}}{{delim}}" )
-save_restoreSet_IncompleteSetsOk( 1 )
-save_restoreSet_DatedBackupFiles( 1 )
-set_pass0_restoreFile( "info_positions.sav" )
-set_pass1_restoreFile( "info_settings.sav" )
+{% endif %}
+# Autosave and archive settings:
+save_restoreSet_status_prefix("{{prefix}}{{pv_delimiter}}")
+save_restoreSet_IncompleteSetsOk(1)
+save_restoreSet_DatedBackupFiles(1)
+set_pass0_restoreFile("info_positions.sav")
+set_pass1_restoreFile("info_settings.sav")
 
-cd "$(IOC_TOP)/autosave"
+{% if production_ioc %}
+# ** Production IOC Settings **
+set_savefile_path("$(IOC_DATA)/$(IOC)/autosave")
+set_requestfile_path("$(IOC_DATA)/$(IOC)/autosave")
+
+# Production IOC autosave files go in iocData:
+cd "$(IOC_DATA)/$(IOC)/autosave"
+
+# Create info_positions.req and info_settings.req
 makeAutosaveFiles()
+
+cd "$(IOC_DATA)/$(IOC)/archive"
+
+# Create $(IOC).archive
+makeArchiveFromDbInfo("$(IOC).archive", "archive")
+cd "$(IOC_TOP)"
+{% else %}
+# ** Development IOC Settings **
+# Development IOC autosave and archive files go in the IOC top directory:
 cd "$(IOC_TOP)"
 
-# Create the archiver file
-makeArchiveFromDbInfo("$(IOC_DATA)/$(IOC)/archive/$(IOC).archive", "archive")
+# (Development mode) Create info_positions.req and info_settings.req
+makeAutosaveFiles()
+# (Development mode) Create the archiver file
+makeArchiveFromDbInfo("$(IOC).archive", "archive")
+{% endif %}
 
 # Configure access security: this is required for caPutLog.
 asSetFilename("$(ACF_FILE)")
@@ -155,7 +263,7 @@ iocInit()
 iocLogInit()
 
 # Configure and start the caPutLogger after iocInit
-epicsEnvSet(EPICS_AS_PUT_LOG_PV, "${IOC}:caPutLog:Last")
+epicsEnvSet(EPICS_AS_PUT_LOG_PV, "$(IOC):caPutLog:Last")
 
 # caPutLogInit("HOST:PORT", config)
 # config options:
@@ -163,11 +271,13 @@ epicsEnvSet(EPICS_AS_PUT_LOG_PV, "${IOC}:caPutLog:Last")
 #       caPutLogOnChange    0: log only on value change
 #       caPutLogAll         1: log all puts
 #       caPutLogAllNoFilter 2: log all puts no filtering on same PV
-caPutLogInit("${EPICS_CAPUTLOG_HOST}:${EPICS_CAPUTLOG_PORT}", 0)
+caPutLogInit("$(EPICS_CAPUTLOG_HOST):$(EPICS_CAPUTLOG_PORT)", 0)
 
 # Start autosave backups
 create_monitor_set( "info_positions.req", 10, "" )
 create_monitor_set( "info_settings.req", 60, "" )
+{% if production_ioc %}
 
 # All IOCs should dump some common info after initial startup.
 < /reg/d/iocCommon/All/post_linux.cmd
+{% endif %}

@@ -1,0 +1,40 @@
+record(lsi, "$(PREFIX):ProjectInfo:PLCHost") {
+    field(DISP, "1")
+    field(DTYP, "Soft Channel")
+    field(INP, ["$(PLC_HOST)"])
+    field(PINI, "YES")
+    info(archive, "monitor 1: VAL")
+}
+
+record(lsi, "$(PREFIX):ProjectInfo:Project") {
+    field(DISP, "1")
+    field(DTYP, "Soft Channel")
+    field(INP, ["$(PROJECT)"])
+    field(PINI, "YES")
+    info(archive, "monitor 1: VAL")
+}
+
+record(lsi, "$(PREFIX):ProjectInfo:Hash") {
+    field(DISP, "1")
+    field(DTYP, "Soft Channel")
+    field(INP, ["$(HASH)"])
+    field(PINI, "YES")
+    field(SIZV, 100)
+    info(archive, "monitor 1: VAL")
+}
+
+record(lsi, "$(PREFIX):ProjectInfo:Version") {
+    field(DISP, "1")
+    field(DTYP, "Soft Channel")
+    field(INP, ["$(VERSION)"])
+    field(PINI, "YES")
+    info(archive, "monitor 1: VAL")
+}
+
+record(lsi, "$(PREFIX):ProjectInfo:Pytmc") {
+    field(DISP, "1")
+    field(DTYP, "Soft Channel")
+    field(INP, ["$(PYTMC)"])
+    field(PINI, "YES")
+    info(archive, "monitor 1: VAL")
+}

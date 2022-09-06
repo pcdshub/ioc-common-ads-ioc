@@ -20,6 +20,7 @@ adsIoc_DBD += ads.dbd
 adsIoc_DBD += asyn.dbd
 adsIoc_DBD += drvAsynIPPort.dbd
 adsIoc_DBD += dbArchive.dbd
+adsIoc_DBD += system.dbd
 
 ifneq (,$(findstring /,$(CAPUTLOG)))
   adsIoc_DBD += caPutLog.dbd

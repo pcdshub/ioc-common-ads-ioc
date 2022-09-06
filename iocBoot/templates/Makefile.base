@@ -13,6 +13,7 @@ SHELL = /bin/bash
 
 # Set defaults:
 PYTMC_OPTS ?=
+PYTMC_TEMPLATE_OPTS ?=
 PYTMC_DB_OPTS ?=
 PREFIX ?=
 HOST_ARCH ?= rhel7-x86_64
@@ -21,30 +22,45 @@ DBD_PATH ?= $(IOC_TOP)/dbd/adsIoc.dbd
 PROJECT_PATH ?= $(IOC_INSTANCE_PATH)/../../$(PROJECT_NAME)/$(PROJECT_NAME).tsproj
 TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
-IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
+ADS_IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
 PRODUCTION_IOC ?= 0
-PYTMC_MIN_VERSION ?= 2.7.7
-
-ifeq ($(PRODUCTION_IOC), 1)
-	IOC_DATA_PATH ?= /reg/d/iocData
-else
-	IOC_DATA_PATH ?= $(HOME)/iocData
-endif
-
-ARCHIVE_PATH ?= $(IOC_DATA_PATH)/$(IOC_NAME)/archive
+PYTMC_MIN_VERSION ?= 2.14.0
+# The minimum callback queue size for EPICS IOCs:
+QUEUE_SIZE_BASE ?= 2000
+# Additional records generated from the PLC project will increase the callback
+# queue size, scaled by this number:
+QUEUE_SIZE_SCALE ?= 2
+# The separator for PV names:
+PV_DELIMITER ?= ':'
+# The PLC hostname which can be used in place of the auto-detected IP address:
+PLC_HOSTNAME ?=
+# The PLC AMS Net ID which can be used in place of the auto-detected one:
+PLC_AMS_NET_ID ?=
+# Ignore linter errors, if possible.  This is disabled by default.
+IGNORE_LINTER_ERRORS ?= 0
+# Add a PLC route automatically at startup
+ADD_PLC_ROUTE ?= 1
+# IOC host IP regular expression
+IOC_HOST_IP_REGEX ?= ^172.*$
+# This is where IOC data goes:
+IOC_DATA_PATH ?= /cds/data/iocData
+# This is where the scripts and database are built:
 BUILD_PATH ?= $(IOC_INSTANCE_PATH)/.pytmc_build
+# This is the default set of macro parameters used for all database files,
+# including $PREFIX, $IOCNAME, and $IOC.
 DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOC),IOC=$$(IOC)'
+# Additional database files can be specified in this space-delimited list:
+ADDITIONAL_DB_FILES ?=
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
 
-all: build paths clean
+all: build clean
 
 help:
 	@echo "Available commands:"
 	@echo "    all:      builds the IOC and cleans the temporary files"
 	@echo "    build:    builds the st.cmd, databases, envPaths, etc."
 	@echo "    clean:    cleans temporary pytmc files in $(BUILD_PATH)"
-	@echo "    paths:    make relevant directories (autosave, etc.)"
 	@echo "    lint:     lint the pragmas"
 	@echo "    lintdb:   lint the generated .db file against the IOC dbd"
 	@echo "    summary:  tool shortcut - display a PLC project summary"
@@ -60,21 +76,32 @@ help:
 
 
 _check_versions:
-	@python -c "import sys, pytmc, distutils.version; print('* Found pytmc v', pytmc.__version__); sys.exit(not (distutils.version.LooseVersion(pytmc.__version__) >= distutils.version.LooseVersion('$(PYTMC_MIN_VERSION)')))" || (echo "A newer pytmc is required: >= $(PYTMC_MIN_VERSION)" && exit 1)
+	@python -c "import sys, pytmc, distutils.version; print('* Found pytmc v', pytmc.__version__); sys.exit(not (distutils.version.LooseVersion(pytmc.__version__) >= distutils.version.LooseVersion('$(PYTMC_MIN_VERSION)')))" || (echo "A newer pytmc is required: >= $(PYTMC_MIN_VERSION)" 2> /dev/null && exit 1)
 
 st.cmd: _check_versions
-	@echo "Executing pytmc stcmd: creating st.cmd..."
+	@echo "Executing pytmc template: creating st.cmd and database files..."
 	cd "$(BUILD_PATH)" && \
-		pytmc stcmd \
-		--name "$(IOC_NAME)" \
-		--plc "$(PLC)" \
-		--template-path "$(TEMPLATE_PATH)" \
-		--template "$(STCMD_TEMPLATE)" \
-		--hashbang "$(BINARY_PATH)" \
-		--only-motor \
-		-p "$(PREFIX)" \
+		pytmc template \
+		--macro prefix="$(PREFIX)" \
+		--macro plc="$(PLC)" \
+		--macro ads_ioc_name="$(ADS_IOC_NAME)" \
+		--macro user="$(USER)" \
+		--macro hashbang="$(BINARY_PATH)" \
+		--macro db_parameters=$(DB_PARAMETERS) \
+		--macro queue_size_base=$(QUEUE_SIZE_BASE) \
+		--macro queue_size_scale=$(QUEUE_SIZE_SCALE) \
+		--macro pv_delimiter=$(PV_DELIMITER) \
+		--macro plc_hostname_override='$(PLC_HOSTNAME)' \
+		--macro plc_ams_net_id_override='$(PLC_AMS_NET_ID)' \
+		--macro ignore_linter_errors='$(IGNORE_LINTER_ERRORS)' \
+		--macro ioc_host_ip_regex='$(IOC_HOST_IP_REGEX)' \
+		--macro add_plc_route='$(ADD_PLC_ROUTE)' \
+		--macro production_ioc='$(PRODUCTION_IOC)' \
+		--macro additional_db_files='$(ADDITIONAL_DB_FILES)' \
+		--template "$(TEMPLATE_PATH)/$(STCMD_TEMPLATE)":"st.cmd" \
 		$(PYTMC_OPTS) \
-		"$(call pyabspath,$(PROJECT_PATH))" > st.cmd
+		$(PYTMC_TEMPLATE_OPTS) \
+		"$(call pyabspath,$(PROJECT_PATH))"
 
 db: _check_versions
 	@echo "Executing pytmc db: creating $(PLC).db and $(PLC).archive..."
@@ -86,14 +113,14 @@ db: _check_versions
 		"$(PLC).db"
 
 envPaths:
-	@echo "* Copying envPaths and fixing IOC_TOP..."
+	@echo "* Copying envPaths and fixing variables..."
 	@cat "$(TEMPLATE_PATH)"/envPaths | \
-		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$(IOC_NAME)")/' \
+		sed -e 's/^epicsEnvSet("IOC",.*)/epicsEnvSet("IOC","$${IOC=$(ADS_IOC_NAME)}")/' \
 		> "$(IOC_INSTANCE_PATH)"/envPaths
 	@echo 'epicsEnvSet("IOC_TOP", "$(IOC_INSTANCE_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
 	@echo 'epicsEnvSet("IOC_DATA", "$(IOC_DATA_PATH)")' >> "$(IOC_INSTANCE_PATH)"/envPaths
 
-install:
+copy_build_output:
 	@echo ""
 	@echo "* Copying st.cmd and databases..."
 	@ if [ -f "$(IOC_INSTANCE_PATH)"/st.cmd ]; then \
@@ -102,51 +129,32 @@ install:
 	fi
 
 	@if test -n "`shopt -s nullglob; echo "$(BUILD_PATH)"/*.db`"; then \
-		echo "* Found database files to install; creating load_plc_databases.cmd..."; \
-		find "$(BUILD_PATH)" -name '*.db' -print0 | \
-			PREFIX=$(PREFIX) DELIM=":" DB_PARAMETERS=$(DB_PARAMETERS) \
-			python $(TEMPLATE_PATH)/dbloads.py \
-			> "$(BUILD_PATH)/load_plc_databases.cmd"; \
-		\
+		echo "* Found database files to install..."; \
 		for filename in "$(BUILD_PATH)"/*.db; \
 		do \
 			echo "* Installing: $$(basename $$filename)"; \
 			install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
 		done \
-	else \
-		touch "$(BUILD_PATH)/load_plc_databases.cmd"; \
 	fi
 
 	@echo "* Installing: st.cmd"
 	install -p -m 0555 "$(BUILD_PATH)/st.cmd" "$(IOC_INSTANCE_PATH)";
 
-	@echo "* Installing: load_plc_databases.cmd"
-	install -p -m 0444 "$(BUILD_PATH)/load_plc_databases.cmd" "$(IOC_INSTANCE_PATH)";
-
 	@shopt -s nullglob; \
 	for filename in "$(BUILD_PATH)"/*.archive; \
 	do \
-		if [ -d "$(ARCHIVE_PATH)" ]; then \
-			echo "* Installing archive file: $$(basename $$filename)"; \
-			install -p -m 0444 "$$filename" "$(ARCHIVE_PATH)"; \
-		else \
-			echo "* Warning: ${ARCHIVE_PATH} does not exist;" \
-				"copying archive file to the IOC instance path."; \
-			install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
-		fi; \
+		install -p -m 0444 "$$filename" "$(IOC_INSTANCE_PATH)"; \
 	done
 
 	@cd "$(IOC_INSTANCE_PATH)"
-
 
 build:
 	@echo "-----------------------------------------------------------"
 	@echo "Build path: $(BUILD_PATH)"
 	@echo "PLC: $(PLC)"
-	@echo "IOC name: $(IOC_NAME)"
+	@echo "IOC name: $(ADS_IOC_NAME) (* Does this match IOC Manager? *)"
 	@echo "PYTMC_OPTS: $(PYTMC_OPTS)"
 	@echo "PROJECT_PATH: $(PROJECT_PATH)"
-	@echo "ARCHIVE_PATH: $(ARCHIVE_PATH)"
 	@echo "Absolute project path: " $(call pyabspath,$(PROJECT_PATH))
 	@echo "-----------------------------------------------------------"
 	@echo ""
@@ -155,9 +163,8 @@ build:
 	mkdir -p "$(BUILD_PATH)"
 
 	@$(MAKE) st.cmd
-	@$(MAKE) db
 	@$(MAKE) envPaths
-	@$(MAKE) install
+	@$(MAKE) copy_build_output
 
 	@echo ""
 	@echo "Build complete."
@@ -168,18 +175,10 @@ clean:
 	@echo "* Cleaning..."
 	@if [ -d "$(BUILD_PATH)" ]; then \
 		shopt -s nullglob; \
-		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/load_plc_databases.cmd \
-			  "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive; \
+		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive; \
 		rmdir "$(BUILD_PATH)"; \
 	fi
 	@echo "Done"
-
-
-paths:
-	@echo "Creating IOC data directory"
-	install --mode 0775 --group ps-ioc --directory $(IOC_DATA_PATH)/$(IOC_NAME)/{iocInfo,archive,logs,autosave}
-	@echo "Creating autosave files directory"
-	install --mode 0775 --group ps-ioc --directory $(IOC_INSTANCE_PATH)/autosave
 
 
 lint: _check_versions
@@ -220,4 +219,4 @@ types: _check_versions
 	pytmc types "$(call pyabspath,$(PROJECT_PATH))" $(PYTMC_OPTS)
 
 
-.PHONY: all _check_versions st.cmd db envPaths install build clean paths lint lintdb summary code outline debug types
+.PHONY: all _check_versions st.cmd db envPaths copy_build_output build clean lint lintdb summary code outline debug types
