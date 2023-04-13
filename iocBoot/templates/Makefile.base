@@ -76,7 +76,7 @@ help:
 
 
 _check_versions:
-	@python -c "import sys, pytmc, distutils.version; print('* Found pytmc v', pytmc.__version__); sys.exit(not (distutils.version.LooseVersion(pytmc.__version__) >= distutils.version.LooseVersion('$(PYTMC_MIN_VERSION)')))" || (echo "A newer pytmc is required: >= $(PYTMC_MIN_VERSION)" 2> /dev/null && exit 1)
+	@python -c "import sys, pytmc, distutils.version; print('* Found pytmc v', pytmc.__version__); sys.exit(not (distutils.version.LooseVersion(str(pytmc.__version__)) >= distutils.version.LooseVersion('$(PYTMC_MIN_VERSION)')))" || (echo "A newer pytmc is required: >= $(PYTMC_MIN_VERSION)" 2> /dev/null && exit 1)
 
 st.cmd: _check_versions
 	@echo "Executing pytmc template: creating st.cmd and database files..."
