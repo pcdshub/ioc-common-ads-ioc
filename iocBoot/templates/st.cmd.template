@@ -2,6 +2,10 @@
 ################### AUTO-GENERATED DO NOT EDIT ###################
 {%  set production_ioc = production_ioc | int %}
 {%- set project, plc = get_plc_by_name(projects, plc) -%}
+{% if plc.name is not defined %}
+# PLC name invalid or not found in project.
+# Double-check Makefile setting "PLC" and compare with TwinCAT.
+{% else %}
 {%- set plc_host = plc_hostname_override or plc.target_ip %}
 {%- set plc_ams_net_id = plc_ams_net_id_override or plc.ams_id %}
 #
@@ -280,4 +284,5 @@ create_monitor_set( "info_settings.req", 60, "" )
 
 # All IOCs should dump some common info after initial startup.
 < /reg/d/iocCommon/All/post_linux.cmd
+{% endif %}
 {% endif %}
