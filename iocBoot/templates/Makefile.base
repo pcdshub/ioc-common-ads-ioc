@@ -9,9 +9,10 @@ ifndef PLC
 $(error PLC is not set)
 endif
 
-SHELL = /bin/bash
+SHELL=bash
 
 # Set defaults:
+PYTHON ?= $(shell which python3 || which python)
 PYTMC_OPTS ?=
 PYTMC_TEMPLATE_OPTS ?=
 PYTMC_DB_OPTS ?=
@@ -52,7 +53,7 @@ DB_PARAMETERS ?= 'PREFIX=$(PREFIX):,IOCNAME=$$(IOC),IOC=$$(IOC)'
 # Additional database files can be specified in this space-delimited list:
 ADDITIONAL_DB_FILES ?=
 # abspath is failing with spaces - falling back to Python here:
-pyabspath = $(shell python -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
+pyabspath = $(shell $(PYTHON) -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
 
 all: build clean
 
@@ -76,7 +77,7 @@ help:
 
 
 _check_versions:
-	@python -c "import sys, pytmc, distutils.version; print('* Found pytmc v', pytmc.__version__); sys.exit(not (distutils.version.LooseVersion(str(pytmc.__version__)) >= distutils.version.LooseVersion('$(PYTMC_MIN_VERSION)')))" || (echo "A newer pytmc is required: >= $(PYTMC_MIN_VERSION)" 2> /dev/null && exit 1)
+	@$(PYTHON) -c "import sys, pytmc, distutils.version; print('* Found pytmc v', pytmc.__version__); sys.exit(not (distutils.version.LooseVersion(str(pytmc.__version__)) >= distutils.version.LooseVersion('$(PYTMC_MIN_VERSION)')))" || (echo "A newer pytmc is required: >= $(PYTMC_MIN_VERSION)" 2> /dev/null && exit 1)
 
 st.cmd: _check_versions
 	@echo "Executing pytmc template: creating st.cmd and database files..."
