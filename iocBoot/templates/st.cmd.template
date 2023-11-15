@@ -182,7 +182,7 @@ dbLoadRecords("caPutLog.db", "IOC=$(IOC)")
 
 ## TwinCAT task, application, and project information databases ##
 {% for priority, (_, task) in plc.instance.task_pous.items() %}
-dbLoadRecords("TwinCAT_TaskInfo.db", "PORT=$(ASYN_PORT),PREFIX={{prefix}},IDX={{task.array_index}}")
+dbLoadRecords("TwinCAT_TaskInfo.db", "PORT=$(ASYN_PORT),PREFIX={{prefix}},IDX={{task.array_index}},TASK_PORT={{ task.attributes.AmsPort }}")
 {% endfor %}
 dbLoadRecords("TwinCAT_AppInfo.db", "PORT=$(ASYN_PORT), PREFIX={{prefix}}")
 
