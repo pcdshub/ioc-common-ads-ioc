@@ -3,16 +3,16 @@ record(longin,"$(PREFIX):TaskInfo:$(IDX):CycleTime"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].CycleTime?")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].CycleTime?")
  field(SCAN,"I/O Intr")
-info(archive, "monitor 1: VAL")
+ info(archive, "monitor 1: VAL")
 }
 
 record(longin,"$(PREFIX):TaskInfo:$(IDX):Priority"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].Priority?")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].Priority?")
  field(SCAN,"I/O Intr")
  info(archive, "monitor 1: VAL")
 }
@@ -21,73 +21,73 @@ record(waveform,"$(PREFIX):TaskInfo:$(IDX):TaskName"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt8ArrayIn")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].TaskName?")
-  field(NELM,63)
-  field(SCAN,"I/O Intr")
-  field(FTVL,"CHAR")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].TaskName?")
+ field(NELM,63)
+ field(SCAN,"I/O Intr")
+ field(FTVL,"CHAR")
  info(archive, "monitor 1: VAL")
 }
 
 
 record(longin,"$(PREFIX):TaskInfo:$(IDX):AdsPort"){
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].AdsPort?")
- info(archive, "monitor 1: VAL")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].AdsPort?")
  field(SCAN,"I/O Intr")
+ info(archive, "monitor 1: VAL")
 }
 
 record(longin,"$(PREFIX):TaskInfo:$(IDX):CycleCount"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].CycleCount?")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].CycleCount?")
  field(SCAN,"I/O Intr")
-info(archive, "monitor 1: VAL")
+ info(archive, "monitor 1: VAL")
 }
 
 record(longin,"$(PREFIX):TaskInfo:$(IDX):DcTaskTime"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].DcTaskTime?")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].DcTaskTime?")
  field(SCAN,"I/O Intr")
-info(archive, "monitor 1: VAL")
+ info(archive, "monitor 1: VAL")
 }
 
 record(longin,"$(PREFIX):TaskInfo:$(IDX):LastExecTime"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].LastExecTime?")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].LastExecTime?")
  field(SCAN,"I/O Intr")
-info(archive, "monitor 1: VAL")
+ info(archive, "monitor 1: VAL")
 }
 
 record(bi,"$(PREFIX):TaskInfo:$(IDX):FirstCycle"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].FirstCycle?")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].FirstCycle?")
  field(SCAN,"I/O Intr")
  field(ZNAM,"FALSE")
  field(ONAM,"TRUE")
-info(archive, "monitor 1: VAL")
+ info(archive, "monitor 1: VAL")
 }
 
 record(bi,"$(PREFIX):TaskInfo:$(IDX):CycleTimeExceeded"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].CycleTimeExceeded?")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].CycleTimeExceeded?")
  field(SCAN,"I/O Intr")
  field(ZNAM,"FALSE")
  field(ONAM,"TRUE")
-info(archive, "monitor 1: VAL")
+ info(archive, "monitor 1: VAL")
 }
 
 record(longin, "$(PREFIX):TaskInfo:$(IDX):ExceedCount_RBV"){
  field(DTYP, "asynInt32")
- field(INP, "@asyn($(PORT),0,1)ADSPORT=$(TASK1_PORT=350)/TS_MS=1000/.ADR.16#F200,16#100,4,19?")
+ field(INP, "@asyn($(PORT),0,1)ADSPORT=$(TASK_PORT=350)/TS_MS=1000/.ADR.16#F200,16#100,4,19?")
  field(PINI, "1")
  field(SCAN, "I/O Intr")
  field(TSE, "-2")
@@ -98,20 +98,20 @@ record(bi,"$(PREFIX):TaskInfo:$(IDX):InCallAfterOutputUpdate"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].InCallAfterOutputUpdate?")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].InCallAfterOutputUpdate?")
  field(SCAN,"I/O Intr")
  field(ZNAM,"FALSE")
  field(ONAM,"TRUE")
-info(archive, "monitor 1: VAL")
+ info(archive, "monitor 1: VAL")
 }
 
 record(bi,"$(PREFIX):TaskInfo:$(IDX):RTViolation"){
  field(PINI, "1")
  field(TSE, -2)
  field(DTYP, "asynInt32")
- field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[1].RTViolation?")
+ field(INP,  "@asyn($(PORT),0,1)ADSPORT=851/POLL_RATE=1/TwinCAT_SystemInfoVarList._TaskInfo[$(IDX)].RTViolation?")
  field(SCAN,"I/O Intr")
  field(ZNAM,"FALSE")
  field(ONAM,"TRUE")
-info(archive, "monitor 1: VAL")
+ info(archive, "monitor 1: VAL")
 }
