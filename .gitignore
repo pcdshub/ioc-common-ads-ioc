@@ -1,15 +1,4 @@
-# Twincat ignores
-_Boot
-_Libraries
-_CompileInfo
-*.sln
-*.suo
-*~
-*.tpy
-*.bak
-*.~u
-
-# EPICS ignores
+# Built file ignores
 O.*
 archive
 autosave
@@ -17,6 +6,31 @@ bin
 build
 db
 dbd
+envPaths
+html
+include
+lib
+*.log
 
-# Vim ignores
+# Terminal editor ignores
 *.swp
+*~
+
+# IDE ignores
+*.vscode
+
+# Core dumps
+core.*
+
+# From original afs gitignore
+# Twincat ignores
+_Boot
+_Libraries
+_CompileInfo
+*.sln
+*.suo
+*.tpy
+*.bak
+*.~u
+# EPICS ignores
+# Vim ignores
