@@ -1,0 +1,92 @@
+name: Testing
+
+on:
+  push:
+  # pull_request:
+  # release:
+  #   types:
+  #     - created
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-20.04
+
+    env:
+      PIB_SPEC_FILES: "./.pib/base.yaml"
+      EPICS_HOST_ARCH: "rhel7-x86_64"  # of course it's not true
+
+    defaults:
+      run:
+        # The following allows for each run step to utilize ~/.bash_profile
+        # for setting up the per-step initial state.
+        # --login: a login shell. Source ~/.bash_profile
+        # -e: exit on first error
+        # -o pipefail: piped processes are important; fail if they fail
+        shell: bash --login -eo pipefail {0}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        submodules: 'recursive'
+
+    # - name: Install required system packages
+    #   run: |
+    #     sudo apt-get -y install ...
+    #
+    - name: Prepare for log files
+      run: |
+        mkdir $HOME/logs
+
+    - name: To figure out
+      run: |
+        # TODO: no good way to inspect that I can think of for this
+        # as it's not a library to link but an external build-time dependency
+        sudo apt-get install -y re2c
+
+    - name: Mock up /cds
+      run: |
+        sudo install -d -o $UID -g $(id -g) /cds/group/pcds/epics
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Upgrade pip
+      run: |
+        pip install --upgrade pip
+
+    - name: Install pib
+      run: |
+        pip install git+https://github.com/pcdshub/pib@master
+
+    - name: Check the pip packages in the test env
+      run: |
+        pip list
+
+    - name: Cache base
+      id: cache-base
+      uses: actions/cache@v3
+      with:
+        path: /cds/group/pcds/epics/base
+        key: ${{ runner.os }}-base
+
+    - name: Build epics-base
+      run: |
+        pib --only epics-base download build release_site
+
+    - name: Inspect the IOC
+      run: |
+        pib --log DEBUG inspect --output pib.yaml .
+
+    - name: Build the IOC
+      run: |
+        pib --log DEBUG -s pib.yaml please
+
+    - name: Upload the package as an artifact
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: Built
+        path: .
