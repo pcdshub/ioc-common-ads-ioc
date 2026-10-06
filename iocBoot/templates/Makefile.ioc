@@ -22,4 +22,8 @@ PLC_HOSTNAME :=
 # leave this blank as it can be found in the project:
 PLC_AMS_NET_ID :=
 
+# Space-delimited list of your own iocsh files, loaded right before iocInit
+# (e.g. afterIocRunning calls, StreamDevice protocol path setup):
+ADDITIONAL_IOCSH_FILES :=
+
 include $(IOC_TOP)/iocBoot/templates/Makefile.base

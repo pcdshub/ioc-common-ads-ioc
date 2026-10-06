@@ -91,6 +91,11 @@ epicsEnvSet("ADS_MAX_DELAY_MS", "100")
 epicsEnvSet("ADS_TIMEOUT_MS",   "1000")
 epicsEnvSet("ADS_TIME_SOURCE",  "0")
 
+# Base StreamDevice protocol search path. A child IOC's own iocsh file
+# (see ADDITIONAL_IOCSH_FILES) can append its own directory, e.g.:
+#   epicsEnvSet("STREAM_PROTOCOL_PATH", "$(STREAM_PROTOCOL_PATH):/path/to/db")
+epicsEnvSet("STREAM_PROTOCOL_PATH", "$(ADS_IOC_TOP)/db")
+
 {% if add_plc_route | int != 0 %}
 # Add a route to the PLC automatically:
 system("${ADS_IOC_TOP}/scripts/add_route.sh {{ plc_host }} {{ ioc_host_ip_regex }}")
@@ -157,11 +162,6 @@ epicsEnvSet("PREFIX",         "{{prefix}}{{pv_delimiter}}")
 epicsEnvSet("NUMAXES",        "{{nc.axis_by_id|max}}")
 epicsEnvSet("MOVE_POLL_RATE", "200")
 epicsEnvSet("IDLE_POLL_RATE", "1000")
-
-{% if stream_motors %}
-## Bulk stream operations
-epicsEnvSet("STREAM_PROTOCOL_PATH", "$(ADS_IOC_TOP)/db")
-{% endif %}
 
 {% if legacy_motors %}
 # Create the EthercatMC controller for the legacy (ST_MotionStage) motors.
@@ -279,6 +279,13 @@ makeArchiveFromDbInfo("$(IOC).archive", "archive")
 # Configure access security: this is required for caPutLog.
 asSetFilename("$(ACF_FILE)")
 
+{% if additional_iocsh_files %}
+{% for iocsh_file in additional_iocsh_files.split(" ") %}
+# Load user-specified iocsh file (e.g. afterIocRunning calls): {{ iocsh_file }}
+iocshLoad("{{ iocsh_file }}", "PREFIX={{prefix}}{{pv_delimiter}}, ASYN_PORT=$(ASYN_PORT)")
+{% endfor %}
+
+{% endif %}
 # Initialize the IOC and start processing records
 iocInit()
 
