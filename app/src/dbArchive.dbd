@@ -1,1 +1,2 @@
 registrar(infoFieldArchiveRegister)
+registrar(afterIocRunningRegister)

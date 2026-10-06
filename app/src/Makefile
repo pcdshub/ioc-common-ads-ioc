@@ -74,6 +74,7 @@ endif
 # adsIoc_registerRecordDeviceDriver.cpp will be created from adsIoc.dbd
 adsIoc_SRCS += adsIoc_registerRecordDeviceDriver.cpp
 adsIoc_SRCS += infoFieldArchive.c
+adsIoc_SRCS += afterIocRunning.c
 adsIoc_SRCS_DEFAULT += adsIocMain.cpp
 
 adsIoc_LIBS += tcmotorRecord
