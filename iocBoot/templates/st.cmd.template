@@ -282,7 +282,7 @@ asSetFilename("$(ACF_FILE)")
 {% if additional_iocsh_files %}
 {% for iocsh_file in additional_iocsh_files.split(" ") %}
 # Load user-specified iocsh file (e.g. afterIocRunning calls): {{ iocsh_file }}
-iocshLoad("{{ iocsh_file }}")
+iocshLoad("{{ iocsh_file }}", "PREFIX={{prefix}}{{pv_delimiter}}, ASYN_PORT=$(ASYN_PORT)")
 {% endfor %}
 
 {% endif %}
