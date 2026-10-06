@@ -1,13 +1,7 @@
 /*************************************************************************\
-* Copyright (C) 2016-2020 Dirk Zimoch
-* Copyright (C) 2020-2025 European Spallation Source, ERIC
-* SPDX-License-Identifier: EPICS
-* EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution.
-*
 * Original work merged upstream into EPICS Base 7.0.10
 * (modules/libcom/src/iocsh/afterIocRunning.c, PR #558). Backported verbatim
-* here, with compatibility shims added for sites still on Base 7.0.3.x.
+* here, with compatibility shims added for slac-epics still below 7.0.10
 \*************************************************************************/
 
 #include <cantProceed.h>
