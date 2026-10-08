@@ -94,7 +94,7 @@ ENV BASE_MODULE_TAG=R7.0.3.1-2.branch
 ENV CALC_MODULE_VERSION=R3.7-1.0.1
 ENV SEQ_MODULE_VERSION=R2.2.4-1.2
 ENV SSCAN_MODULE_VERSION=R2.10.2-1.1.0
-ENV GTEST_MODULE_VERSION=v1.0.1
+ENV GTEST_MODULE_VERSION=R1.0.1-1.0.0
 
 # Git remotes
 ENV GIT_MODULE_TOP=https://github.com/slac-epics
@@ -251,7 +251,7 @@ RUN make -C ${ADS_IOC_PATH} && \
 RUN git clone --depth 1 \
         --recurse-submodules \
         --branch ${GTEST_MODULE_VERSION} \
-        https://github.com/epics-modules/gtest.git \
+        ${GIT_MODULE_TOP}/gtest.git \
         ${GTEST_MODULE_PATH} && \
     echo "EPICS_BASE=${EPICS_BASE}" > \
         ${GTEST_MODULE_PATH}/configure/RELEASE.local && \
