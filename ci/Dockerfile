@@ -251,7 +251,7 @@ RUN make -C ${ADS_IOC_PATH} && \
 RUN git clone --depth 1 \
         --recurse-submodules \
         --branch ${GTEST_MODULE_VERSION} \
-        https://github.com/epics-modules/gtest.git \
+        ${GIT_MODULE_TOP}/gtest.git \
         ${GTEST_MODULE_PATH} && \
     echo "EPICS_BASE=${EPICS_BASE}" > \
         ${GTEST_MODULE_PATH}/configure/RELEASE.local && \
