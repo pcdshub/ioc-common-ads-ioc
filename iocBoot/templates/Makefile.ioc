@@ -11,6 +11,10 @@ PLC := {{ plc_name }}
 PYTMC_OPTS :=
 PREFIX := PLC:$(PLC)
 
+# Automatically reconcile the EtherCAT access file during IOC builds.
+# Set to 0 to disable automatic patching.
+PATCH_ETHERCAT_ACCESS := 1
+
 # With two $$, as in $$(IOC) below, this will be expanded in the
 # environment of st.cmd:
 DB_PARAMETERS := 'PREFIX=$(PREFIX):,IOCNAME=$$(IOC),IOC=$$(IOC)'

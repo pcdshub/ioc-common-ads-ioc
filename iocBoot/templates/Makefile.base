@@ -25,7 +25,13 @@ TEMPLATE_PATH ?= $(IOC_TOP)/iocBoot/templates
 STCMD_TEMPLATE ?= st.cmd.template
 ADS_IOC_NAME := $(shell basename "$(IOC_INSTANCE_PATH)")
 PRODUCTION_IOC ?= 0
-PYTMC_MIN_VERSION ?= 2.21.0
+PATCH_ETHERCAT_ACCESS ?= 1
+PYTMC_MIN_VERSION ?= 2.23.0
+ifneq ($(PATCH_ETHERCAT_ACCESS),1)
+ifneq ($(PATCH_ETHERCAT_ACCESS),0)
+$(error PATCH_ETHERCAT_ACCESS must be 0 or 1)
+endif
+endif
 # The minimum callback queue size for EPICS IOCs:
 QUEUE_SIZE_BASE ?= 2000
 # Additional records generated from the PLC project will increase the callback
@@ -160,6 +166,16 @@ copy_build_output:
 			install -p -m 0644 "$$filename" "$$target"; \
 		fi; \
 	done
+
+ifeq ($(PATCH_ETHERCAT_ACCESS),1)
+	@shopt -s nullglob; \
+	for filename in "$(BUILD_PATH)"/*_ethercat_state_access.cmd; do \
+		target="$(IOC_INSTANCE_PATH)/$$(basename "$$filename")"; \
+		echo "* Patching EtherCAT access: $$(basename "$$target")"; \
+		pytmc ethercat_access "$(call pyabspath,$(PROJECT_PATH))" \
+			--config "$$target" --patch --yes; \
+	done
+endif
 
 	@echo "* Installing: st.cmd"
 	install -p -m 0555 "$(BUILD_PATH)/st.cmd" "$(IOC_INSTANCE_PATH)";

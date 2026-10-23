@@ -51,8 +51,12 @@ exactly one configured I/O device, the driver derives the fallback by replacing
 the PLC AMS Net ID's final two components with `2.1`. Set
 `ETHERCAT_STATE_SCAN_SECONDS` in the same Makefile to adjust the device/link
 readback scan period; it defaults to two seconds.
-The generated file is created only when missing and is not overwritten, so
-operator access choices survive later database generation. Use
+The generated file is installed only when missing. During each IOC build, the
+generated Makefile runs `pytmc ethercat_access ... --patch --yes` to reconcile
+the terminal list while retaining access assignments for terminals that remain
+in the project. New terminals keep their default-deny settings. Set
+`PATCH_ETHERCAT_ACCESS := 0` in the IOC's `Makefile` to disable automatic
+patching. The makefile requires pytmc 2.23.0 or newer. Use
 `pytmc ethercat_access project.tsproj --config path/to/*_ethercat_state_access.cmd`
 to print the effective per-terminal caput and internal-processing access.
 
