@@ -24,6 +24,38 @@ Dependencies
 * [autosave](https://github.com/epics-modules/autosave)
 * [calc](https://github.com/epics-modules/calc)
 
+EtherCAT terminal state requests
+================================
+
+When a TwinCAT project contains EtherCAT boxes, `pytmc` generates a separate
+`*_EtherCAT.db` with device-state (`State_RBV`), link-state (`Link_RBV`), and
+requested-state (`State_SP`) records. Device state requests use the EtherCAT
+master ADS port and support `BOOTSTRAP`, `INIT`, `PREOP`, `SAFEOP`, and `OP`.
+The link-state enum reports individual status flags and uses `MULTIPLE_FLAGS`
+when more than one link flag is set.
+
+Request records start disabled. The generated
+`*_ethercat_state_access.cmd` IOC-shell file lists each terminal by ADS port
+and project name; uncomment all three `epicsEnvSet` lines for a terminal to
+permit writes. They select the record's access-security group and clear
+`DISP` and `DISA` before database loading. This group also prevents caputs to
+the gate fields for terminals that remain denied. `DISP` blocks request
+caputs by default, and `DISA`/`DISV` disable internal record processing while
+denied. The generic `ADS_WRITE_DENY` and `ADS_WRITE_ALLOWED` groups can also
+be reused for future NC/CoE write PVs.
+
+The driver discovers the EtherCAT master AMS Net ID from the PLC ADS I/O
+device list by default. Set `ETHERCAT_MASTER_AMS_NET_ID` in an IOC's
+`Makefile.ioc` to override discovery. If discovery fails or does not find
+exactly one configured I/O device, the driver derives the fallback by replacing
+the PLC AMS Net ID's final two components with `2.1`. Set
+`ETHERCAT_STATE_SCAN_SECONDS` in the same Makefile to adjust the device/link
+readback scan period; it defaults to two seconds.
+The generated file is created only when missing and is not overwritten, so
+operator access choices survive later database generation. Use
+`pytmc ethercat_access project.tsproj --config path/to/*_ethercat_state_access.cmd`
+to print the effective per-terminal caput and internal-processing access.
+
 Logging
 =======
 

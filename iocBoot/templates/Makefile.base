@@ -37,6 +37,11 @@ PV_DELIMITER ?= ':'
 PLC_HOSTNAME ?=
 # The PLC AMS Net ID which can be used in place of the auto-detected one:
 PLC_AMS_NET_ID ?=
+# The EtherCAT master AMS Net ID, if explicitly configured.  When blank, the
+# ADS I/O-device list is queried at IOC startup, with an AMS suffix fallback.
+ETHERCAT_MASTER_AMS_NET_ID ?=
+# Scan interval for the generated EtherCAT state and link readbacks.
+ETHERCAT_STATE_SCAN_SECONDS ?= 2
 # Ignore linter errors, if possible.  This is disabled by default.
 IGNORE_LINTER_ERRORS ?= 0
 # Add a PLC route automatically at startup
@@ -98,6 +103,8 @@ st.cmd: _check_versions
 		--macro pv_delimiter=$(PV_DELIMITER) \
 		--macro plc_hostname_override='$(PLC_HOSTNAME)' \
 		--macro plc_ams_net_id_override='$(PLC_AMS_NET_ID)' \
+		--macro ethercat_master_ams_net_id_override='$(ETHERCAT_MASTER_AMS_NET_ID)' \
+		--macro ethercat_state_scan_seconds='$(ETHERCAT_STATE_SCAN_SECONDS)' \
 		--macro ignore_linter_errors='$(IGNORE_LINTER_ERRORS)' \
 		--macro ioc_host_ip_regex='$(IOC_HOST_IP_REGEX)' \
 		--macro add_plc_route='$(ADD_PLC_ROUTE)' \
@@ -143,6 +150,17 @@ copy_build_output:
 		done \
 	fi
 
+	@shopt -s nullglob; \
+	for filename in "$(BUILD_PATH)"/*_ethercat_state_access.cmd; do \
+		target="$(IOC_INSTANCE_PATH)/$$(basename "$$filename")"; \
+		if [ -e "$$target" ]; then \
+			echo "* Preserving: $$(basename "$$target")"; \
+		else \
+			echo "* Installing: $$(basename "$$filename")"; \
+			install -p -m 0644 "$$filename" "$$target"; \
+		fi; \
+	done
+
 	@echo "* Installing: st.cmd"
 	install -p -m 0555 "$(BUILD_PATH)/st.cmd" "$(IOC_INSTANCE_PATH)";
 
@@ -181,7 +199,7 @@ clean:
 	@echo "* Cleaning..."
 	@if [ -d "$(BUILD_PATH)" ]; then \
 		shopt -s nullglob; \
-		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive; \
+		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive "$(BUILD_PATH)"/*_ethercat_state_access.cmd; \
 		rmdir "$(BUILD_PATH)"; \
 	fi
 	@echo "Done"
