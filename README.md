@@ -56,7 +56,7 @@ generated Makefile runs `pytmc ethercat_access ... --patch --yes` to reconcile
 the terminal list while retaining access assignments for terminals that remain
 in the project. New terminals keep their default-deny settings. Set
 `PATCH_ETHERCAT_ACCESS := 0` in the IOC's `Makefile` to disable automatic
-patching. The makefile requires pytmc 2.23.0 or newer. Use
+patching. Use
 `pytmc ethercat_access project.tsproj --config path/to/*_ethercat_state_access.cmd`
 to print the effective per-terminal caput and internal-processing access.
 
