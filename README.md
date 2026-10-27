@@ -41,8 +41,8 @@ permit writes. They select the record's access-security group and clear
 `DISP` and `DISA` before database loading. This group also prevents caputs to
 the gate fields for terminals that remain denied. `DISP` blocks request
 caputs by default, and `DISA`/`DISV` disable internal record processing while
-denied. The generic `ADS_WRITE_DENY` and `ADS_WRITE_ALLOWED` groups can also
-be reused for future NC/CoE write PVs.
+denied. Requests use the `NO_WRITE` and `DEFAULT` access groups from
+`unrestricted.acf`.
 
 The driver discovers the EtherCAT master AMS Net ID from the PLC ADS I/O
 device list by default. Set `ETHERCAT_MASTER_AMS_NET_ID` in an IOC's
@@ -51,6 +51,9 @@ exactly one configured I/O device, the driver derives the fallback by replacing
 the PLC AMS Net ID's final two components with `2.1`. Set
 `ETHERCAT_STATE_SCAN_SECONDS` in the same Makefile to adjust the device/link
 readback scan period; it defaults to two seconds.
+The same `Makefile.ioc` sets `GENERATE_ETHERCAT_STATE_DB := 1` by default.
+Set it to `0` to omit the generated EtherCAT state/link database and its
+IOC-shell access configuration from the startup script.
 The generated file is installed only when missing. During each IOC build, the
 generated Makefile runs `pytmc ethercat_access ... --patch --yes` to reconcile
 the terminal list while retaining access assignments for terminals that remain

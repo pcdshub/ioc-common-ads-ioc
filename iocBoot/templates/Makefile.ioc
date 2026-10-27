@@ -30,6 +30,9 @@ PLC_AMS_NET_ID :=
 ETHERCAT_MASTER_AMS_NET_ID :=
 # EtherCAT device/link state PV scan interval in seconds:
 ETHERCAT_STATE_SCAN_SECONDS := 2
+# Generate EtherCAT state and link records. Set to 0 to disable the records
+# and their generated IOC-shell access configuration.
+GENERATE_ETHERCAT_STATE_DB := 1
 
 # Space-delimited list of your own iocsh files, loaded right before iocInit
 # (e.g. afterIocRunning calls, StreamDevice protocol path setup):
