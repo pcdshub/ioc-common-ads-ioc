@@ -223,8 +223,8 @@ clean:
 	@echo "* Cleaning..."
 	@if [ -d "$(BUILD_PATH)" ]; then \
 		shopt -s nullglob; \
-		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive "$(BUILD_PATH)"/*_ethercat_state_access.cmd; \
-		rmdir "$(BUILD_PATH)"; \
+		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive; \
+		rmdir --ignore-fail-on-non-empty "$(BUILD_PATH)"; \
 	fi
 	@echo "Done"
 

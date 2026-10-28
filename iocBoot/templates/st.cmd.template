@@ -53,6 +53,7 @@
     plc,
     allow_errors=allow_errors,
     include_ethercat_state_db=(generate_ethercat_state_db != 0),
+    macro_substitutions=db_parameters ~ ",IOC=" ~ ads_ioc_name,
 ) %}
 {%- set num_records = records | length %}
 {%- set max_params = num_records + 1000 if num_records else 10000 %}
