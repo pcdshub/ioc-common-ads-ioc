@@ -47,21 +47,16 @@
 # Run common startup commands for linux soft IOC's
 < $(IOC_COMMON)/All/pre_linux.cmd
 
-{%- if plc.tmc %}
-
 {%- set allow_errors = ignore_linter_errors | int %}
-{%- set db_filenames, records = generate_records(plc, allow_errors=allow_errors) %}
+{%- set generate_ethercat_state_db = generate_ethercat_state_db | default(1) | int %}
+{%- set db_filenames, records = generate_records(
+    plc,
+    allow_errors=allow_errors,
+    include_ethercat_state_db=(generate_ethercat_state_db != 0),
+    macro_substitutions=db_parameters ~ ",IOC=" ~ ads_ioc_name,
+) %}
 {%- set num_records = records | length %}
-{%- set max_params = num_records + 1000 %}
-
-{%- else %}
-
-{%- set db_filenames = [] %}
-{%- set records = {} %}
-{%- set num_records = 0 %}
-{%- set max_params = 10000 %}
-
-{%- endif %}
+{%- set max_params = num_records + 1000 if num_records else 10000 %}
 
 < envPaths
 
@@ -85,6 +80,8 @@ epicsEnvSet("ASYN_PORT",        "ASYN_PLC")
 epicsEnvSet("IPADDR",           "{{ plc_host }}")
 epicsEnvSet("AMSID",            "{{ plc_ams_net_id }}")
 epicsEnvSet("AMS_PORT",         "{{ plc.port }}")
+epicsEnvSet("ECAT_MASTER_AMS_NET_ID", "{{ ethercat_master_ams_net_id_override }}")
+epicsEnvSet("ECAT_STATE_SCAN_SECONDS", "{{ ethercat_state_scan_seconds }}")
 epicsEnvSet("ADS_MAX_PARAMS",   "{{ max_params }}")
 epicsEnvSet("ADS_SAMPLE_MS",    "50")
 epicsEnvSet("ADS_MAX_DELAY_MS", "100")
@@ -223,7 +220,15 @@ dbLoadRecords("TwinCAT_Dependency.db", "PREFIX={{prefix}},DEPENDENCY={{ libraryn
 cd "$(IOC_TOP)"
 
 ## PLC Project Database files ##
-{% if plc.tmc %}
+{% if generate_ethercat_state_db %}
+{% set ethercat_terminals = get_ethercat_terminals(plc.root) %}
+{% if ethercat_terminals %}
+{% set db_parameters = db_parameters ~ ",ECAT_STATE_SCAN_SECONDS=" ~ ethercat_state_scan_seconds ~ "," ~ access_macro_substitutions(ethercat_terminals) %}
+iocshLoad("$(IOC_TOP)/{{ plc.name }}_ethercat_state_access.cmd")
+{% endif %}
+{% endif %}
+
+{% if db_filenames %}
 {% for db in db_filenames %}
 dbLoadRecords("{{ db }}", "PORT=$(ASYN_PORT),{{ db_parameters }}")
 {% endfor %}
