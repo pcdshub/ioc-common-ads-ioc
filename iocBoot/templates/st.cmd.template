@@ -80,7 +80,6 @@ epicsEnvSet("ASYN_PORT",        "ASYN_PLC")
 epicsEnvSet("IPADDR",           "{{ plc_host }}")
 epicsEnvSet("AMSID",            "{{ plc_ams_net_id }}")
 epicsEnvSet("AMS_PORT",         "{{ plc.port }}")
-epicsEnvSet("ECAT_MASTER_AMS_NET_ID", "{{ ethercat_master_ams_net_id_override }}")
 epicsEnvSet("ECAT_STATE_SCAN_SECONDS", "{{ ethercat_state_scan_seconds }}")
 epicsEnvSet("ADS_MAX_PARAMS",   "{{ max_params }}")
 epicsEnvSet("ADS_SAMPLE_MS",    "50")
@@ -100,7 +99,8 @@ system("${ADS_IOC_TOP}/scripts/add_route.sh {{ plc_host }} {{ ioc_host_ip_regex 
 {% endif %}
 # adsAsynPortDriverConfigure(portName, ipaddr, amsaddr, amsport,
 #    asynParamTableSize, priority, noAutoConnect, defaultSampleTimeMS,
-#    maxDelayTimeMS, adsTimeoutMS, defaultTimeSource)
+#    maxDelayTimeMS, adsTimeoutMS, defaultTimeSource,
+#    ethercatMasterAmsNetIdOverride)
 # portName            Asyn port name
 # ipAddr              IP address of PLC
 # amsaddr             AMS Address of PLC
@@ -121,7 +121,10 @@ system("${ADS_IOC_TOP}/scripts/add_route.sh {{ plc_host }} {{ ioc_host_ip_regex 
 #                         This is the preferred setting.
 #                     EPICS=1: The time stamp will be made when the updated data
 #                         arrives in the EPICS client.
-adsAsynPortDriverConfigure("$(ASYN_PORT)", "$(IPADDR)", "$(AMSID)", "$(AMS_PORT)", "$(ADS_MAX_PARAMS)", 0, 0, "$(ADS_SAMPLE_MS)", "$(ADS_MAX_DELAY_MS)", "$(ADS_TIMEOUT_MS)", "$(ADS_TIME_SOURCE)")
+# ethercatMasterAmsNetIdOverride Optional explicit EtherCAT master AMS Net ID.
+#                     When provided, it overrides automatic discovery; leave
+#                     empty to use the driver's normal discovery behavior.
+adsAsynPortDriverConfigure("$(ASYN_PORT)", "$(IPADDR)", "$(AMSID)", "$(AMS_PORT)", "$(ADS_MAX_PARAMS)", 0, 0, "$(ADS_SAMPLE_MS)", "$(ADS_MAX_DELAY_MS)", "$(ADS_TIMEOUT_MS)", "$(ADS_TIME_SOURCE)", "{{ ethercat_master_ams_net_id_override }}")
 
 ## Asyn/ADS diagnostics configuration (always loaded)
 #define ASYN_TRACE_ERROR     0x0001
