@@ -11,6 +11,8 @@ html
 include
 lib
 *.log
+__pycache__/
+*.py[codz]
 
 # Terminal editor ignores
 *.swp
