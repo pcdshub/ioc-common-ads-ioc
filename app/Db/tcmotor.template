@@ -70,8 +70,10 @@ record(tcmotor, "$(PREFIX)$(M)") {
     field(OUT_BDST, "$(PREFIX)$(M):NC:Backlash:Goal PP")
     field(OUT_OFF,  "$(PREFIX)$(M):NC:PosBias:Goal PP MS")
 
-    # No autosave: setpoints are re-seeded from the PLC RBK_* readbacks at IDLY,
-    # which overrides any restored values (see init_output_fields).
+    # No autosave for setpoints: they are re-seeded from the PLC RBK_* readbacks
+    # at IDLY, which overrides any restored values (see init_output_fields).
+    # DESC/EGU/PREC aren't PLC-seeded, so they are safe to autosave.
+    info(autosaveFields, "DESC EGU PREC")
     info(archive, "DESC EGU PREC RBV VAL DMOV MOVN HLS LLS MSTA HOMED HPOS DIR OFF HLM LLM VELO VBAS VMAX ACCL ACCS BDST TWV CNEN SPMG LVIO")
 }
 
