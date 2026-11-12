@@ -48,11 +48,23 @@ PLC_AMS_NET_ID ?=
 ETHERCAT_MASTER_AMS_NET_ID ?=
 # Scan interval for the generated EtherCAT state and link readbacks.
 ETHERCAT_STATE_SCAN_SECONDS ?= 2
-# Generate EtherCAT state/link records and access config (0 or 1).
-GENERATE_ETHERCAT_STATE_DB ?= 1
-ifneq ($(GENERATE_ETHERCAT_STATE_DB),1)
-ifneq ($(GENERATE_ETHERCAT_STATE_DB),0)
-$(error GENERATE_ETHERCAT_STATE_DB must be 0 or 1)
+# Generate EtherCAT state/link files (0 or 1). Support the old variable name.
+ifeq ($(origin GENERATE_ETHERCAT_STATE_FILES),undefined)
+ifeq ($(origin GENERATE_ETHERCAT_STATE_DB),undefined)
+GENERATE_ETHERCAT_STATE_FILES := 1
+else
+GENERATE_ETHERCAT_STATE_FILES := $(GENERATE_ETHERCAT_STATE_DB)
+endif
+endif
+ifeq ($(origin GENERATE_ETHERCAT_STATE_DB),command line)
+ifneq ($(origin GENERATE_ETHERCAT_STATE_FILES),command line)
+GENERATE_ETHERCAT_STATE_FILES := $(GENERATE_ETHERCAT_STATE_DB)
+endif
+endif
+GENERATE_ETHERCAT_STATE_DB ?= $(GENERATE_ETHERCAT_STATE_FILES)
+ifneq ($(GENERATE_ETHERCAT_STATE_FILES),1)
+ifneq ($(GENERATE_ETHERCAT_STATE_FILES),0)
+$(error GENERATE_ETHERCAT_STATE_FILES must be 0 or 1)
 endif
 endif
 # Ignore linter errors, if possible.  This is disabled by default.
@@ -118,7 +130,7 @@ st.cmd: _check_versions
 		--macro plc_ams_net_id_override='$(PLC_AMS_NET_ID)' \
 		--macro ethercat_master_ams_net_id_override='$(ETHERCAT_MASTER_AMS_NET_ID)' \
 		--macro ethercat_state_scan_seconds='$(ETHERCAT_STATE_SCAN_SECONDS)' \
-		--macro generate_ethercat_state_db='$(GENERATE_ETHERCAT_STATE_DB)' \
+		--macro generate_ethercat_state_files='$(GENERATE_ETHERCAT_STATE_FILES)' \
 		--macro ignore_linter_errors='$(IGNORE_LINTER_ERRORS)' \
 		--macro ioc_host_ip_regex='$(IOC_HOST_IP_REGEX)' \
 		--macro add_plc_route='$(ADD_PLC_ROUTE)' \
@@ -223,7 +235,9 @@ clean:
 	@echo "* Cleaning..."
 	@if [ -d "$(BUILD_PATH)" ]; then \
 		shopt -s nullglob; \
-		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db "$(BUILD_PATH)"/*.archive; \
+		rm -f "$(BUILD_PATH)"/st.cmd "$(BUILD_PATH)"/*.db \
+			"$(BUILD_PATH)"/*.archive \
+			"$(BUILD_PATH)"/*_ethercat_state_access.cmd; \
 		rmdir --ignore-fail-on-non-empty "$(BUILD_PATH)"; \
 	fi
 	@echo "Done"

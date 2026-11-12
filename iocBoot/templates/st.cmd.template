@@ -48,11 +48,15 @@
 < $(IOC_COMMON)/All/pre_linux.cmd
 
 {%- set allow_errors = ignore_linter_errors | int %}
-{%- set generate_ethercat_state_db = generate_ethercat_state_db | default(1) | int %}
+{%- set generate_ethercat_state_files = (
+    generate_ethercat_state_files
+    | default(generate_ethercat_state_db | default(1))
+    | int
+) %}
 {%- set db_filenames, records = generate_records(
     plc,
     allow_errors=allow_errors,
-    include_ethercat_state_db=(generate_ethercat_state_db != 0),
+    include_ethercat_state_db=(generate_ethercat_state_files != 0),
     macro_substitutions=db_parameters ~ ",IOC=" ~ ads_ioc_name,
 ) %}
 {%- set num_records = records | length %}
@@ -223,7 +227,7 @@ dbLoadRecords("TwinCAT_Dependency.db", "PREFIX={{prefix}},DEPENDENCY={{ libraryn
 cd "$(IOC_TOP)"
 
 ## PLC Project Database files ##
-{% if generate_ethercat_state_db %}
+{% if generate_ethercat_state_files %}
 {% set ethercat_terminals = get_ethercat_terminals(plc.root) %}
 {% if ethercat_terminals %}
 {% set db_parameters = db_parameters ~ ",ECAT_STATE_SCAN_SECONDS=" ~ ethercat_state_scan_seconds ~ "," ~ access_macro_substitutions(ethercat_terminals) %}
