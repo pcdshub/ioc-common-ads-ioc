@@ -1,0 +1,13 @@
+# Copy next to your IOC Makefile and list it in ADDITIONAL_IOCSH_FILES.
+#
+# Loaded by st.cmd *before* makeAutosaveFiles(), so records loaded here with
+# info(autosaveFields...) tags are included in the generated autosave .req files.
+#
+# Macros available: PREFIX (e.g. "TST:"), ASYN_PORT, plus anything listed in
+# ADDITIONAL_IOCSH_MACROS (e.g. ADDITIONAL_IOCSH_MACROS := GROUP=GANTRY,AXIS=1).
+# Your own constants can also simply be written in this file.
+
+dbLoadRecords("$(IOC_TOP)/user-example.db", "PREFIX=$(PREFIX),GROUP=$(GROUP=GANTRY)")
+
+# Runs after iocInit; use for anything that must happen on a live IOC.
+# afterIocRunning("dbpf $(PREFIX)$(GROUP=GANTRY):MASTER:SOME:PV.ASG DEFAULT")

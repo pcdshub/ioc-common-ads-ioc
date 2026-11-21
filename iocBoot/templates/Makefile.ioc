@@ -37,5 +37,8 @@ GENERATE_ETHERCAT_STATE_DB := 1
 # Space-delimited list of your own iocsh files, loaded right before iocInit
 # (e.g. afterIocRunning calls, StreamDevice protocol path setup):
 ADDITIONAL_IOCSH_FILES :=
+# Optional comma-separated macros passed to those iocsh files (in addition to
+# PREFIX and ASYN_PORT), e.g. ADDITIONAL_IOCSH_MACROS := AXIS=1,GROUP=GANTRY
+ADDITIONAL_IOCSH_MACROS :=
 
 include $(IOC_TOP)/iocBoot/templates/Makefile.base

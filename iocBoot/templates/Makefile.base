@@ -73,6 +73,9 @@ ADDITIONAL_DB_FILES ?=
 # Additional iocsh files loaded right before iocInit (e.g. per-instance
 # afterIocRunning calls), specified in this space-delimited list:
 ADDITIONAL_IOCSH_FILES ?=
+# Extra comma-separated macros passed to every additional iocsh file, in
+# addition to PREFIX and ASYN_PORT (e.g. 'AXIS=1,GROUP=GANTRY'):
+ADDITIONAL_IOCSH_MACROS ?=
 # abspath is failing with spaces - falling back to Python here:
 pyabspath = $(shell $(PYTHON) -c "import os, sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))" "$(1)" )
 
@@ -125,6 +128,7 @@ st.cmd: _check_versions
 		--macro production_ioc='$(PRODUCTION_IOC)' \
 		--macro additional_db_files='$(ADDITIONAL_DB_FILES)' \
 		--macro additional_iocsh_files='$(ADDITIONAL_IOCSH_FILES)' \
+		--macro additional_iocsh_macros='$(ADDITIONAL_IOCSH_MACROS)' \
 		--template "$(TEMPLATE_PATH)/$(STCMD_TEMPLATE)":"st.cmd" \
 		$(PYTMC_OPTS) \
 		$(PYTMC_TEMPLATE_OPTS) \
