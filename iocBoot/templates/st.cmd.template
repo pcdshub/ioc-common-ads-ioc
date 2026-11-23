@@ -250,6 +250,15 @@ dbLoadRecords("{{ db }}", "PORT=$(ASYN_PORT),{{ db_parameters }}")
 {% endfor %}
 
 {% endif %}
+{% if additional_iocsh_files %}
+# User iocsh files are loaded before makeAutosaveFiles() so that any records
+# they load with info(autosaveFields...) tags end up in the autosave .req files.
+{% for iocsh_file in additional_iocsh_files.split(" ") %}
+# Load user-specified iocsh file (e.g. dbLoadRecords, afterIocRunning calls): {{ iocsh_file }}
+iocshLoad("{{ iocsh_file }}", "PREFIX={{prefix}}{{pv_delimiter}}, ASYN_PORT=$(ASYN_PORT){% if additional_iocsh_macros %}, {{ additional_iocsh_macros }}{% endif %}")
+{% endfor %}
+
+{% endif %}
 # Autosave and archive settings:
 save_restoreSet_status_prefix("{{prefix}}{{pv_delimiter}}")
 save_restoreSet_IncompleteSetsOk(1)
@@ -287,13 +296,6 @@ makeArchiveFromDbInfo("$(IOC).archive", "archive")
 # Configure access security: this is required for caPutLog.
 asSetFilename("$(ACF_FILE)")
 
-{% if additional_iocsh_files %}
-{% for iocsh_file in additional_iocsh_files.split(" ") %}
-# Load user-specified iocsh file (e.g. afterIocRunning calls): {{ iocsh_file }}
-iocshLoad("{{ iocsh_file }}", "PREFIX={{prefix}}{{pv_delimiter}}, ASYN_PORT=$(ASYN_PORT)")
-{% endfor %}
-
-{% endif %}
 # Initialize the IOC and start processing records
 iocInit()
 

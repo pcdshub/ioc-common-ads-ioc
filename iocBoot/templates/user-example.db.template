@@ -1,0 +1,22 @@
+# Copy to iocBoot/<ioc>/user-<anything>.db and load it from your additional
+# iocsh file with dbLoadRecords (see user-example.iocsh.template) or list it in
+# ADDITIONAL_DB_FILES. Either way it is loaded before makeAutosaveFiles().
+#
+# Re-declaring a pytmc record with the SAME record type merges these fields
+# into it (EPICS allows duplicate definitions of the same type). The file is
+# loaded before makeAutosaveFiles(), so info() tags here are picked up for
+# info_positions.req / info_settings.req.
+#
+# $(PREFIX) is the PLC prefix (e.g. "TST:") and the record name must match the
+# pytmc-generated one exactly.
+
+record(mbbi, "$(PREFIX)$(GROUP):MASTER:NC:Backlash:Acc_RBV") {
+  # Allow caput on this normally read-only record. The generated NO_WRITE group
+  # blocks it; DEFAULT is writable in unrestricted.acf. There is no "WRITE"
+  # group, and an undefined ASG name has no rules so it would deny all access.
+  field(ASG, "DEFAULT")
+
+  # Use autosaveFields (-> info_settings.req). Do NOT use autosaveFields_pass0:
+  # it would replace pytmc's list for this record instead of adding to it.
+  info(autosaveFields, "ZRST ONST TWST THST FRST")
+}
